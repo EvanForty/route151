@@ -1,0 +1,3310 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Route 151 — Small world. Wild possibilities.</title>
+  <meta name="description" content="A free-to-play pixel sandbox. Be the creature, explore the routes, take on jobs and build a collection of graded cards.">
+  <meta name="color-scheme" content="dark">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&family=Press+Start+2P&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+/* Route 151 — site chrome and landing page. Bright, sunny, pixel. */
+:root {
+  --night: #0f1c45;
+  --night-2: #18307a;
+  --ocean: #1f6fe0;
+  --sky: #4cbcff;
+  --sky-2: #2a8cf0;
+  --grass: #4cc552;
+  --grass-dk: #1f7a34;
+  --sun: #ffd23f;
+  --sun-dk: #f4a81c;
+  --coral: #ff5a5f;
+  --cream: #fff7e0;
+  --ink: #14204a;
+  --text: #ffffff;
+  --muted: #d6e8ff;
+  --green: #a6f07a;
+  --yellow: var(--sun);
+  --line: rgba(255, 255, 255, .14);
+  --navy: var(--ink);
+  --display: 'Press Start 2P', 'Silkscreen', ui-monospace, monospace;
+  --sans: 'Pixelify Sans', 'Silkscreen', ui-monospace, monospace;
+  --mono: 'Silkscreen', 'Pixelify Sans', ui-monospace, monospace;
+  --tile-water: none; --tile-grass: none; --tile-tall: none; --tile-path: none; --tile-flower: none; --tile-sand: none;
+  color-scheme: dark;
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+html { scroll-padding-top: calc(env(safe-area-inset-top, 0px) + 16px); scroll-behavior: smooth; background: var(--night); }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0; min-height: 100%; color: var(--text); font-family: var(--sans); -webkit-font-smoothing: antialiased;
+  background:
+    radial-gradient(circle, rgba(255,255,255,.55) 1px, transparent 1.5px) 0 0 / 120px 120px,
+    radial-gradient(circle, rgba(255,255,255,.3) 1px, transparent 1.5px) 60px 40px / 90px 90px,
+    var(--night);
+}
+a { color: inherit; }
+button { font-family: inherit; cursor: pointer; }
+:focus-visible { outline: 3px solid var(--sun); outline-offset: 3px; }
+[hidden] { display: none !important; }
+.hidden { display: none !important; }
+canvas { image-rendering: pixelated; }
+
+/* ---------- Header ---------- */
+.site-head {
+  position: sticky; top: 0; z-index: 10; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 18px;
+  padding: 14px clamp(16px, 2.2vw, 28px); background: var(--night);
+  box-shadow: 0 4px 0 var(--sun), 0 8px 0 var(--ink);
+}
+.brand-link { display: inline-flex; align-items: center; gap: 14px; text-decoration: none; }
+.logo-box { width: 84px; height: 84px; flex: none; box-shadow: 0 0 0 3px #fff, 0 0 0 6px var(--ink), 5px 5px 0 6px var(--ink); }
+.logo-box.sm { width: 46px; height: 46px; box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--ink); }
+.logo-canvas { width: 100%; height: 100%; display: block; }
+.brand-name { font: 400 12px var(--display); letter-spacing: .06em; color: #fff; text-shadow: 2px 2px 0 var(--ink); }
+.brand-name b { color: var(--sun); font-weight: 700; }
+.head-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+.back-link { font: 400 13px var(--mono); color: var(--sky); text-decoration: none; margin-right: 6px; }
+.back-link:hover { color: #fff; }
+.route-landing .play-only { display: none !important; }
+.route-play .logo-box, .site-head.compact .logo-box { width: 52px; height: 52px; }
+.route-play .site-head, .site-head.compact { padding-top: 10px; padding-bottom: 10px; }
+
+.btn-wallet, .btn-enter {
+  display: inline-flex; align-items: center; gap: 14px; border: 3px solid var(--ink); border-radius: 0; text-decoration: none;
+  background: var(--sun); color: var(--ink); font: 400 10px/1.4 var(--display); letter-spacing: .02em;
+  box-shadow: inset 0 -5px 0 var(--sun-dk), 6px 6px 0 var(--ink); transition: transform .12s ease, box-shadow .12s ease;
+}
+.btn-wallet { padding: 14px 22px; }
+.btn-wallet:hover, .btn-enter:hover { transform: translate(-2px, -2px); box-shadow: inset 0 -5px 0 var(--sun-dk), 8px 8px 0 var(--ink); }
+.btn-wallet:active, .btn-enter:active { transform: translate(3px, 3px); box-shadow: inset 0 -2px 0 var(--sun-dk), 3px 3px 0 var(--ink); }
+.btn-wallet.on { background: var(--night-2); color: var(--sun); border-color: var(--sun); box-shadow: 6px 6px 0 var(--ink); }
+
+/* Quick navigation */
+.quick-nav { display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap; }
+.quick-nav a {
+  padding: 10px 12px; font: 400 14px var(--mono); color: #fff; text-decoration: none; letter-spacing: .02em;
+  border: 2px solid transparent;
+}
+.quick-nav a:hover { color: var(--sun); border-color: rgba(255,210,63,.4); }
+.quick-nav a.on { color: var(--sun); border-color: var(--sun); }
+.quick-nav .qn-enter {
+  margin-right: 8px; padding: 10px 14px; color: var(--ink); background: var(--sun); border: 3px solid var(--ink);
+  box-shadow: inset 0 -4px 0 var(--sun-dk), 4px 4px 0 var(--coral);
+}
+.quick-nav .qn-enter:hover { color: var(--ink); border-color: var(--ink); transform: translate(-1px, -1px); box-shadow: inset 0 -4px 0 var(--sun-dk), 5px 5px 0 var(--coral); }
+.quick-nav .qn-enter.on { display: none; }
+
+/* ---------- Hero ---------- */
+#view-landing { overflow-x: clip; }
+.hero-band {
+  position: relative; overflow: hidden;
+  background: linear-gradient(180deg, #7fd4ff 0%, var(--sky) 30%, var(--sky-2) 70%, var(--ocean) 100%);
+}
+.clouds i {
+  position: absolute; display: block; width: 16px; height: 8px; background: #fff;
+  box-shadow: 16px 0 #fff, 32px 0 #fff, 48px 0 #fff, 8px -8px #fff, 24px -8px #fff, 40px -8px #fff, 24px -16px #fff,
+    0 8px rgba(214,240,255,.9), 16px 8px rgba(214,240,255,.9), 32px 8px rgba(214,240,255,.9), 48px 8px rgba(214,240,255,.9);
+  animation: drift 70s linear infinite; opacity: .95;
+}
+.clouds i:nth-child(1) { top: 70px; left: -10%; transform: scale(1.4); }
+.clouds i:nth-child(2) { top: 160px; left: 40%; animation-duration: 95s; animation-delay: -40s; }
+.clouds i:nth-child(3) { top: 40px; left: 70%; transform: scale(1.8); animation-duration: 120s; animation-delay: -70s; }
+.clouds i:nth-child(4) { top: 260px; left: 10%; animation-duration: 85s; animation-delay: -20s; opacity: .7; }
+@keyframes drift { from { translate: -20vw 0; } to { translate: 120vw 0; } }
+@media (prefers-reduced-motion: reduce) { .clouds i { animation: none; } }
+
+.hero {
+  position: relative; max-width: 1180px; margin: 0 auto; padding: clamp(40px, 6vw, 70px) clamp(18px, 3vw, 36px) 60px;
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(28px, 4vw, 56px); align-items: center;
+}
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 12px; margin: 0 0 24px; padding: 9px 14px;
+  font: 400 14px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: #fff;
+  background: var(--ink); box-shadow: 4px 4px 0 rgba(20,32,74,.35);
+}
+.eyebrow i { width: 12px; height: 12px; background: var(--grass); box-shadow: 3px 3px 0 var(--grass-dk); }
+.hero h1 {
+  margin: 0; font: 400 clamp(22px, 2.6vw, 34px)/1.45 var(--display); letter-spacing: 0; color: #fff;
+  text-shadow: 4px 4px 0 var(--ink);
+}
+.hero h1 span { color: var(--sun); }
+.lede { margin: 26px 0 36px; max-width: 32ch; font: 500 clamp(19px, 1.7vw, 23px)/1.5 var(--sans); color: #fff; text-shadow: 0 1px 0 rgba(20,32,74,.45); }
+.cta-row { display: flex; align-items: center; gap: 26px; flex-wrap: wrap; }
+.btn-enter { padding: 24px 24px; min-width: 250px; justify-content: space-between; text-transform: uppercase; font-size: 12px; }
+.btn-enter span { font-size: 22px; line-height: 0; }
+.btn-enter.alt { background: var(--ink); color: var(--sun); border-color: var(--ink); box-shadow: inset 0 -5px 0 #0a1230, 6px 6px 0 var(--coral); }
+.btn-enter.alt:hover { box-shadow: inset 0 -5px 0 #0a1230, 8px 8px 0 var(--coral); }
+.btn-how { font: 400 16px var(--mono); color: #fff; text-decoration: none; text-shadow: 2px 2px 0 var(--ink); }
+.btn-how:hover { color: var(--sun); }
+.ticks { list-style: none; padding: 0; margin: 40px 0 0; display: flex; gap: 10px; flex-wrap: wrap; font: 400 13px var(--mono); letter-spacing: .04em; text-transform: uppercase; color: var(--ink); }
+.ticks li { padding: 7px 11px; background: var(--cream); box-shadow: 3px 3px 0 var(--ink); }
+.ticks li::before { content: '+'; color: var(--coral); margin-right: 6px; font-weight: 800; }
+
+.hero-art { margin: 0; display: grid; place-items: center; }
+.pixel-frame {
+  position: relative; width: min(100%, 480px); background: var(--ink); padding: 10px;
+  box-shadow: 0 0 0 6px #fff, 0 0 0 10px var(--ink), 14px 14px 0 10px rgba(20,32,74,.45);
+}
+.hero-logo { display: block; width: 100%; height: auto; }
+.pixel-frame figcaption {
+  position: absolute; left: 50%; bottom: -24px; transform: translateX(-50%); white-space: nowrap;
+  padding: 9px 16px; background: var(--coral); color: #fff; font: 400 13px var(--mono); letter-spacing: .12em; text-transform: uppercase;
+  box-shadow: 4px 4px 0 var(--ink);
+}
+.shore { height: 64px; background: var(--tile-water) 0 0 / 32px 32px repeat-x, var(--ocean); border-bottom: 32px solid transparent; position: relative; }
+.shore::after { content: ''; position: absolute; left: 0; right: 0; bottom: -32px; height: 32px; background: var(--tile-sand) 0 0 / 32px 32px repeat-x, #f0dca0; }
+
+/* ---------- Strip ---------- */
+.strip { position: relative; background: var(--tile-tall) 0 0 / 32px 32px, var(--grass); box-shadow: inset 0 4px 0 var(--grass-dk), inset 0 -4px 0 var(--grass-dk); }
+.strip ul {
+  list-style: none; margin: 0 auto; padding: 34px 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 12px;
+  font: 400 14px var(--mono); letter-spacing: .04em; text-transform: uppercase; color: var(--ink);
+}
+.strip li { padding: 8px 12px; background: var(--cream); box-shadow: 3px 3px 0 var(--ink); }
+.strip li + li::before { content: '✦'; color: var(--coral); margin-right: 10px; }
+.strip-down {
+  position: absolute; left: 50%; bottom: -26px; transform: translateX(-50%); z-index: 2;
+  width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--sun); color: var(--ink); text-decoration: none; font-size: 22px; font-weight: 800;
+  border: 3px solid var(--ink); box-shadow: 0 4px 0 var(--ink);
+}
+.strip-down:hover { background: #fff; }
+
+/* ---------- Bands + blocks ---------- */
+.band { position: relative; }
+.band-night { background: linear-gradient(180deg, var(--night-2), var(--night)); }
+.band-cream { background: var(--cream); color: var(--ink); box-shadow: inset 0 6px 0 var(--grass-dk); }
+.band-sun { background: var(--sun); color: var(--ink); box-shadow: inset 0 6px 0 var(--sun-dk); }
+.block { max-width: 1180px; margin: 0 auto; padding: clamp(70px, 8vw, 110px) clamp(18px, 3vw, 36px) clamp(60px, 7vw, 96px); }
+.block-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; margin-bottom: 34px; }
+.kicker { display: inline-block; margin: 0 0 16px; padding: 6px 10px; font: 400 13px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink); background: var(--green); box-shadow: 3px 3px 0 var(--ink); }
+.band-cream .kicker { background: var(--sky); color: #fff; }
+.band-sun .kicker { background: var(--coral); color: #fff; }
+.block h2 { margin: 0; font: 400 clamp(20px, 2.4vw, 30px)/1.45 var(--display); }
+.band-night h2 { text-shadow: 3px 3px 0 #000; }
+.aside { margin: 0; max-width: 34ch; font: 500 19px/1.5 var(--sans); color: var(--sky); text-align: right; }
+.band-cream .aside { color: var(--grass-dk); }
+.badge { margin: 0; padding: 12px 16px; font: 400 13px var(--mono); letter-spacing: .04em; text-transform: uppercase; color: var(--sun); background: var(--ink); box-shadow: 4px 4px 0 var(--coral); }
+
+/* Showcase console */
+.showcase {
+  background: var(--tile-water) 0 0 / 32px 32px, var(--ocean); border: 4px solid var(--ink);
+  box-shadow: 8px 8px 0 #000; padding: clamp(18px, 4vw, 46px) clamp(12px, 3vw, 40px) 24px; display: grid; justify-items: center;
+}
+.mini-ds { width: min(100%, 470px); }
+.mini-lid, .mini-base {
+  background: linear-gradient(180deg, #ff7a6e, #ff5a5f 16%, #e2424c);
+  border-radius: 16px; box-shadow: inset 0 2px 0 rgba(255,255,255,.35), inset 0 -4px 0 #b12a38, 0 14px 0 rgba(20,32,74,.5);
+}
+.mini-lid { display: flex; align-items: center; gap: 14px; padding: 14px 18px; margin: 0 22px; border-radius: 16px 16px 6px 6px; }
+.spk { width: 14px; height: 36px; flex: none; background: radial-gradient(circle, #b12a38 1.4px, transparent 1.8px) 0 0 / 7px 7px; }
+.mini-screen { flex: 1; padding: 8px; background: var(--ink); border-radius: 4px; }
+.mini-screen canvas#attract { display: block; width: 100%; aspect-ratio: 4 / 3; background: #000; }
+.mini-hinge { height: 12px; margin: 0 70px; background: linear-gradient(90deg, #b12a38 0 18%, transparent 18% 82%, #b12a38 82%); }
+.mini-base { display: grid; grid-template-columns: 52px 1fr 52px; align-items: center; gap: 12px; padding: 16px 14px; border-radius: 6px 6px 16px 16px; }
+.mini-dpad { width: 42px; height: 42px; justify-self: center; background:
+  linear-gradient(var(--ink), var(--ink)) center / 14px 42px no-repeat,
+  linear-gradient(var(--ink), var(--ink)) center / 42px 14px no-repeat; }
+.mini-ab { position: relative; height: 54px; }
+.mini-ab i { position: absolute; width: 20px; height: 20px; border-radius: 50%; box-shadow: 0 2px 0 rgba(0,0,0,.3); }
+.mini-ab .a { right: 2px; top: 4px; background: var(--sun); }
+.mini-ab .b { left: 6px; top: 28px; background: var(--sky); }
+.pick { aspect-ratio: 4 / 3; background: var(--cream); color: var(--ink); display: grid; align-content: center; gap: 10px; padding: 10px; font-family: var(--mono); }
+.pick p { margin: 0; text-align: center; font-size: clamp(11px, 2.4vw, 15px); }
+.pick-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.pick-card {
+  display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 4px; text-decoration: none; color: inherit;
+  background: #fff; border-radius: 3px; box-shadow: 0 0 0 2px var(--ink), 0 4px 0 var(--ink); font-size: clamp(10px, 2vw, 13px);
+}
+.pick-card:hover { background: #fff3b8; transform: translateY(-2px); }
+.pick-card canvas { width: 58%; aspect-ratio: 1; }
+.pick-card .type { font-size: 10px; }
+.showcase-note { margin: 18px 0 0; padding: 8px 12px; font: 400 13px var(--mono); color: var(--ink); background: var(--cream); box-shadow: 3px 3px 0 var(--ink); text-align: center; }
+
+/* Places */
+.places { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.place { --z: var(--grass); --zd: var(--grass-dk); background: #fff; border: 4px solid var(--ink); box-shadow: 8px 8px 0 var(--zd); padding: 0 0 24px; transition: transform .15s ease, box-shadow .15s ease; }
+.place:hover { transform: translate(-3px, -3px); box-shadow: 11px 11px 0 var(--zd); }
+.z-caves { --z: #e0a14a; --zd: #8a5524; }
+.z-dens { --z: #b06ae6; --zd: #5e2e8c; }
+.scene { display: block; width: 100%; aspect-ratio: 4 / 3; background: #000; border-bottom: 4px solid var(--ink); }
+.place-tag { display: inline-block; margin: 18px 20px 12px; padding: 5px 9px; font: 400 12px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink); background: var(--z); box-shadow: 2px 2px 0 var(--ink); }
+.place h3 { margin: 0 20px 10px; font: 400 14px/1.5 var(--display); color: var(--ink); }
+.place p:last-child { margin: 0 20px; font: 500 17px/1.5 var(--sans); color: #3a4466; }
+
+/* Steps */
+.steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.steps li { padding: 26px 24px 30px; background: var(--cream); border: 4px solid var(--ink); box-shadow: 6px 6px 0 var(--ink); }
+.num {
+  display: inline-grid; place-items: center; width: 52px; height: 52px; margin-bottom: 16px;
+  font: 400 16px var(--display); color: #fff; background: var(--coral); box-shadow: 3px 3px 0 var(--ink);
+}
+.steps li:nth-child(2) .num { background: var(--sky-2); }
+.steps li:nth-child(3) .num { background: var(--grass-dk); }
+.steps h3 { margin: 0 0 10px; font: 400 14px/1.5 var(--display); color: var(--ink); }
+.steps p { margin: 0; font: 500 17px/1.5 var(--sans); color: #3a4466; }
+.final-cta { display: flex; justify-content: center; padding: 50px 0 0; }
+
+/* Footer */
+.site-foot {
+  position: relative; padding: 44px clamp(16px, 2.2vw, 28px) 22px; background: var(--grass-dk);
+  display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+}
+.site-foot::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 24px; background: var(--tile-path) 0 0 / 24px 24px repeat-x, #e2cc96; box-shadow: 0 4px 0 var(--ink); }
+.site-foot p { margin: 0; font: 500 17px var(--sans); color: #eaffdf; }
+.foot-top { padding: 9px 13px; font: 400 13px var(--mono); letter-spacing: .04em; text-transform: uppercase; color: var(--ink); background: var(--sun); text-decoration: none; box-shadow: 3px 3px 0 var(--ink); }
+
+/* Game page sits on the night sky too */
+.route-play .console .help { color: var(--sun); }
+
+.mbox, .toast { font-family: var(--sans) !important; font-size: 16px; }
+.mbox h2 { font-family: var(--display); font-size: 12px; line-height: 1.5; }
+.mbox button, .mbox .wbtn { font-family: var(--mono) !important; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1080px) {
+  .site-head { grid-template-columns: auto 1fr; row-gap: 12px; }
+  .quick-nav { grid-column: 1 / -1; grid-row: 2; justify-content: flex-start; flex-wrap: nowrap; overflow-x: auto; margin: 0 -4px; padding: 2px 4px 6px; scrollbar-width: none; }
+  .quick-nav::-webkit-scrollbar { display: none; }
+  .quick-nav a { flex: none; }
+}
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr; }
+  .hero-art { order: -1; margin-bottom: 20px; }
+  .pixel-frame { width: min(100%, 400px); }
+  .places, .steps { grid-template-columns: 1fr; }
+  .aside { text-align: left; }
+}
+@media (max-width: 560px) {
+  .logo-box { width: 58px; height: 58px; }
+  .brand-name { display: none; }
+  .btn-wallet { padding: 12px 14px; font-size: 11px; }
+  .strip ul { gap: 8px; padding: 26px 12px 34px; }
+  .strip li + li::before { margin-right: 6px; }
+  .mini-lid { margin: 0 8px; }
+  .hero h1 { text-shadow: 3px 3px 0 var(--ink); font-size: 20px; }
+  .quick-nav a { font-size: 13px; padding: 8px 10px; }
+}
+
+</style>
+  <style>
+/* Route 151 — game page: console shell and bottom-screen UI. Site chrome lives in site.css. */
+:root {
+  --w: 448px;
+  --k: 1.75;
+  --shell: #234a92;
+  --shell-2: #1b3a76;
+  --shell-3: #12295a;
+  --shell-hi: #3d6cc4;
+  --bezel: #0d1222;
+  --ui: #f4f0e2;
+  --ui-2: #e4dfcc;
+  --ink: #1a1f2b;
+  --mute: #5f6470;
+  --gold: #ffcb2e;
+  --gold-ink: #1b1400;
+  --hot: #ff3d5e;
+  --pixel: 'Silkscreen', 'Press Start 2P', ui-monospace, monospace;
+  --title: 'Press Start 2P', 'Silkscreen', ui-monospace, monospace;
+}
+.chip {
+  font: 600 11px var(--mono); padding: 7px 10px; border-radius: 2px; letter-spacing: .04em;
+  background: #101814; color: #c9d2c4; box-shadow: inset 0 0 0 1px var(--line);
+}
+.chip.live { color: var(--green); box-shadow: inset 0 0 0 1px rgba(143,209,106,.45); }
+.chip.gold { color: var(--yellow); }
+
+/* ---------- Console ---------- */
+.console { font-family: var(--pixel); max-width: 1100px; margin: 0 auto; padding: 18px 12px 36px; display: flex; flex-direction: column; align-items: center; }
+.lid, .base {
+  background: linear-gradient(180deg, var(--shell-hi), var(--shell) 18%, var(--shell-2));
+  border-radius: 20px;
+  box-shadow: inset 0 2px 0 rgba(255,255,255,.22), inset 0 -4px 0 var(--shell-3), 0 22px 50px rgba(0,0,0,.6);
+}
+.lid { display: flex; align-items: center; gap: 18px; padding: 16px 22px; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; }
+.speaker {
+  width: 26px; height: 44px; opacity: .8;
+  background: radial-gradient(circle, var(--shell-3) 1.6px, transparent 2px) 0 0 / 8px 8px;
+}
+.hinge { display: flex; justify-content: space-between; width: calc(var(--w) + 120px); height: 14px; }
+.hinge i { width: 70px; background: linear-gradient(180deg, var(--shell-3), var(--shell-2)); border-radius: 0 0 6px 6px; }
+.base {
+  display: grid; grid-template-columns: 100px calc(var(--w) + 20px) 100px; grid-template-areas: "dpad screen ab";
+  align-items: center; gap: 22px; padding: 18px 22px; border-top-left-radius: 8px; border-top-right-radius: 8px;
+}
+.screen {
+  padding: 10px; background: var(--bezel); border-radius: 6px;
+  box-shadow: inset 0 0 0 2px #1d2540, 0 1px 0 rgba(255,255,255,.18);
+}
+#top { display: block; width: var(--w); height: calc(var(--w) * .75); image-rendering: pixelated; background: #000; }
+.bottom-screen { grid-area: screen; width: calc(var(--w) + 20px); }
+.bottom-inner {
+  width: var(--w); height: calc(var(--w) * .75); overflow: hidden; position: relative; background: var(--ui);
+}
+.tabs, .panel { width: 256px; transform: scale(var(--k)); transform-origin: 0 0; }
+.tabs {
+  position: absolute; left: 0; top: 0; height: 18px; display: grid; grid-template-columns: repeat(4, 1fr);
+  background: #1f2a44;
+}
+.panel {
+  position: absolute; left: 0; top: calc(18px * var(--k)); height: 174px; overflow-y: auto; overflow-x: hidden;
+  color: var(--ink); font-size: 8px; line-height: 1.35; scrollbar-width: thin;
+}
+.tabs button {
+  border: 0; background: transparent; color: #aab3d6; font-size: 8px; padding: 0;
+  border-right: 1px solid #141c30;
+}
+.tabs button.on { background: var(--ui); color: var(--ink); font-weight: 700; }
+.tabs.locked button { opacity: .45; pointer-events: none; }
+
+.help { margin: 14px 0 0; font: 12px var(--mono); color: var(--green); text-align: center; }
+
+/* D-pad + buttons */
+.dpad { grid-area: dpad; display: grid; grid-template: 32px 32px 32px / 32px 32px 32px; justify-content: center; }
+.d { border: 0; background: #1a2238; box-shadow: inset 0 -3px 0 #0b1020; touch-action: none; }
+.d.up { grid-area: 1 / 2; border-radius: 4px 4px 0 0; }
+.d.left { grid-area: 2 / 1; border-radius: 4px 0 0 4px; }
+.d.mid { grid-area: 2 / 2; background: #1a2238; }
+.d.right { grid-area: 2 / 3; border-radius: 0 4px 4px 0; }
+.d.down { grid-area: 3 / 2; border-radius: 0 0 4px 4px; }
+.d:active { background: #0f1526; box-shadow: none; }
+.ab { grid-area: ab; position: relative; height: 110px; }
+.k {
+  position: absolute; width: 44px; height: 44px; border-radius: 50%; border: 0;
+  font: 11px var(--title); color: #fff; touch-action: manipulation;
+  box-shadow: inset 0 -4px 0 rgba(0,0,0,.3), 0 2px 0 rgba(0,0,0,.25);
+}
+.k.a { right: 4px; top: 14px; background: #e5304a; }
+.k.b { left: 4px; top: 52px; background: #f2b51f; color: #3a2a00; }
+.k:active { transform: translateY(2px); box-shadow: inset 0 -1px 0 rgba(0,0,0,.3); }
+
+@media (max-width: 759px) {
+  .lid { padding: 12px; }
+  .speaker { display: none; }
+  .hinge { width: calc(var(--w) + 30px); }
+  .hinge i { width: 40px; }
+  .base { grid-template-columns: 1fr 1fr; grid-template-areas: "screen screen" "dpad ab"; padding: 12px; gap: 16px; }
+  .bottom-screen { justify-self: center; }
+  .ab { width: 110px; justify-self: end; }
+}
+
+/* ---------- Bottom screen content ---------- */
+.pad { padding: 6px 7px 10px; }
+.panel h2 { font: 8px/1.4 var(--title); margin: 2px 0 4px; color: var(--ink); }
+.panel h3 { font-size: 8px; font-weight: 700; margin: 8px 0 3px; padding-top: 5px; border-top: 1px dashed #c6bfa4; }
+.panel p { margin: 2px 0 5px; }
+.mute { color: var(--mute); }
+.px { image-rendering: pixelated; }
+.row { display: flex; gap: 5px; justify-content: space-between; margin-top: 6px; }
+.mrow { display: flex; gap: 5px; align-items: center; justify-content: space-between; }
+
+.panel button.sm {
+  font-size: 8px; padding: 2px 5px; border: 0; border-radius: 2px; color: var(--ink);
+  background: #fff; box-shadow: 0 0 0 1px #1d2630, 0 2px 0 #1d2630;
+}
+.panel button.sm:active { transform: translateY(1px); box-shadow: 0 0 0 1px #1d2630, 0 1px 0 #1d2630; }
+.panel button.sm.gold { background: var(--gold); color: var(--gold-ink); }
+.panel button.sm:disabled { opacity: .45; cursor: default; }
+.tag { font-size: 7px; padding: 1px 4px; border-radius: 2px; background: var(--ui-2); color: var(--mute); white-space: nowrap; }
+.tag.on { background: #2c3256; color: #fff6d8; }
+
+.type { font-size: 7px; padding: 0 4px; border-radius: 2px; color: #fff; text-transform: lowercase; }
+.t-fire { background: #e0662c; } .t-water { background: #2f7ad0; } .t-leaf, .t-grass { background: #3f9a44; }
+.t-bug { background: #8a5cc4; } .t-rock { background: #7a6e66; } .t-shade, .t-ghost { background: #4a3c5c; } .t-thorn { background: #8c3a4a; }
+
+/* Starter pick */
+.starters { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; margin-top: 6px; }
+.starter {
+  display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 2px;
+  background: #fff; border: 0; border-radius: 3px; color: var(--ink); font-size: 8px;
+  box-shadow: 0 0 0 1px #1d2630, 0 3px 0 #1d2630;
+}
+.starter:hover { background: #fffbe8; }
+.starter img { width: 48px; height: 48px; }
+.starter small { color: var(--mute); font-size: 7px; }
+
+/* Dialog */
+.dialog { height: 174px; display: flex; flex-direction: column; justify-content: flex-end; padding: 8px; }
+.dbox {
+  position: relative; background: #fff; padding: 8px 10px 14px; border-radius: 3px; min-height: 66px;
+  box-shadow: 0 0 0 2px #1d2630, inset 0 0 0 3px #b9d3c3;
+}
+.dtitle { display: block; font: 7px var(--title); color: #3a6ac8; margin-bottom: 5px; }
+.dbox p { margin: 0; font-size: 9px; line-height: 1.45; }
+.next { position: absolute; right: 6px; bottom: 3px; border: 0; background: none; color: var(--hot); font-size: 9px; animation: blink 1s steps(2) infinite; }
+.dhint { text-align: center; color: var(--mute); font-size: 7px; margin: 5px 0 0; }
+@keyframes blink { 50% { opacity: .2; } }
+
+/* Battle */
+.battle { height: 174px; display: flex; flex-direction: column; padding: 7px; gap: 6px; }
+.blog { background: #fff; border-radius: 3px; padding: 7px 8px; min-height: 34px; font-size: 9px; box-shadow: 0 0 0 2px #1d2630; }
+.moves { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; flex: 1; }
+.moves button {
+  display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 1px;
+  border: 0; border-radius: 3px; background: #fff; color: var(--ink); padding: 4px 7px; font-size: 9px; text-align: left;
+  box-shadow: 0 0 0 1px #1d2630, 0 3px 0 #1d2630;
+}
+.moves button[class^="t-"] { color: #fff; }
+.moves button small { font-size: 7px; opacity: .75; }
+.moves button:active { transform: translateY(2px); box-shadow: 0 0 0 1px #1d2630, 0 1px 0 #1d2630; }
+.cont { margin-top: auto; border: 0; border-radius: 3px; padding: 10px; background: #2c3256; color: #fff6d8; font-size: 9px; }
+
+/* Bag */
+.mon { display: grid; grid-template-columns: 48px 1fr; gap: 7px; align-items: center; padding: 5px; background: #fff; border-radius: 3px; box-shadow: 0 0 0 1px #9fb7a9; }
+.mon.vaulted { box-shadow: 0 0 0 2px var(--gold); background: linear-gradient(135deg, #fffaf0, #fff); }
+.portrait { width: 48px; height: 48px; display: grid; place-items: center; background: var(--ui-2); border-radius: 2px; overflow: hidden; }
+.portrait img.px { width: 48px; height: 48px; }
+.portrait .cardimg { width: 100%; height: 100%; object-fit: cover; }
+.holo {
+  width: 34px; height: 46px; border-radius: 2px; display: grid; place-items: end center; padding-bottom: 3px;
+  background: linear-gradient(135deg, #f2b632, #fff6d8 40%, #7fd8ff 60%, #f2b632); font-size: 6px; color: var(--gold-ink);
+  box-shadow: inset 0 0 0 2px #c98d10;
+}
+.info b { font-size: 9px; }
+.bar { position: relative; height: 9px; background: #1d2630; border-radius: 2px; margin-top: 3px; overflow: hidden; }
+.bar i { position: absolute; inset: 1px auto 1px 1px; background: #5fe08a; border-radius: 1px; max-width: calc(100% - 2px); }
+.bar.xp i { background: #6a9bff; }
+.bar span { position: relative; display: block; font-size: 6px; line-height: 9px; padding-left: 4px; color: #fff; text-shadow: 0 1px 0 #000; }
+.items { display: grid; gap: 3px; }
+.item, .vrow { display: flex; justify-content: space-between; align-items: center; gap: 6px; padding: 3px 5px; background: #fff; border-radius: 2px; }
+.vrow > div { display: flex; flex-direction: column; }
+.vrow.on { box-shadow: 0 0 0 1px var(--gold); }
+
+/* Cards */
+.cc { display: grid; grid-template-columns: 26px 1fr; gap: 6px; padding: 4px; margin-bottom: 4px; background: #fff; border-radius: 3px; box-shadow: inset 3px 0 0 var(--tc); }
+.cc-art {
+  width: 26px; height: 36px; border-radius: 2px; display: grid; place-items: center;
+  background: linear-gradient(160deg, #14162a, #2c3256); box-shadow: inset 0 0 0 2px var(--tc);
+  font: 8px var(--title); color: var(--tc);
+}
+.cc-art.rare, .cc-art.grail { background: linear-gradient(135deg, var(--tc), #fff6d8 45%, #7fd8ff 55%, var(--tc)); color: #14162a; }
+.cc-txt { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.cc-txt b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cc-acts { display: flex; gap: 4px; margin-top: 3px; }
+
+/* Map */
+.mapv canvas { display: block; margin: 4px auto; image-rendering: pixelated; box-shadow: 0 0 0 2px #1d2630; }
+.legend { display: flex; justify-content: center; gap: 10px; font-size: 7px; color: var(--mute); }
+.lg { display: inline-block; width: 6px; height: 6px; margin-right: 3px; vertical-align: -1px; }
+.lg.you { background: var(--hot); } .lg.goal { background: var(--gold); } .lg.grass { background: #3f8a34; }
+
+/* Jobs */
+.job { background: #fff; border-radius: 3px; padding: 5px 6px; margin-bottom: 5px; box-shadow: 0 0 0 1px #b9d3c3; }
+.job.active { box-shadow: 0 0 0 1px #2c3256; }
+.job.ready { box-shadow: 0 0 0 2px var(--gold); }
+.jh { display: flex; justify-content: space-between; align-items: center; gap: 4px; }
+.obj { margin-top: 3px; color: #3a6ac8; }
+.pay { margin-top: 2px; font-size: 7px; color: #8a5a0a; }
+
+/* Market + claim */
+.stats { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin: 5px 0; }
+.stats div { background: #fff; border-radius: 2px; padding: 4px 5px; display: flex; flex-direction: column; }
+.stats b { font: 8px var(--title); color: var(--ink); }
+.stats span { font-size: 7px; color: var(--mute); }
+.boosts { display: grid; gap: 4px; }
+.boost {
+  display: flex; flex-direction: column; gap: 2px; text-align: left; padding: 4px 6px; border: 0; border-radius: 3px;
+  background: #fff; color: var(--ink); font-size: 8px; box-shadow: 0 0 0 1px #9fb7a9;
+}
+.boost.on { box-shadow: 0 0 0 2px #2c3256; background: #fffbe8; }
+.boost:disabled { opacity: .45; cursor: default; }
+.bh { display: flex; justify-content: space-between; }
+.bh span { color: #b8401a; }
+.odds { display: flex; height: 4px; border-radius: 2px; overflow: hidden; background: #ddd; }
+.odds i { display: block; height: 100%; }
+.boost small { font-size: 7px; color: var(--mute); }
+.keys { display: flex; flex-wrap: wrap; gap: 6px; margin: 5px 0 2px; font-size: 7px; color: var(--mute); }
+.keys i { display: inline-block; width: 6px; height: 6px; margin-right: 2px; vertical-align: -1px; }
+.reveal { text-align: center; }
+.reveal .cc { text-align: left; }
+
+/* ---------- Modal + toast ---------- */
+.modal { position: fixed; inset: 0; background: rgba(10,12,24,.7); display: grid; place-items: center; z-index: 20; padding: 16px; }
+.mbox {
+  width: min(420px, 100%); background: var(--ui); color: var(--ink); border-radius: 6px; padding: 18px;
+  box-shadow: 0 0 0 3px #1d2630, 0 20px 50px rgba(0,0,0,.5); font-size: 13px; line-height: 1.5;
+}
+.mbox h2 { font: 12px var(--title); margin: 0 0 8px; }
+.mbox p { margin: 6px 0; }
+.mbox .mute { color: var(--mute); }
+.mbox .addr { font-size: 11px; word-break: break-all; background: #fff; padding: 6px 8px; border-radius: 3px; }
+.mbox .stats b { font-size: 10px; }
+.mbox .stats span { font-size: 11px; }
+.mbox button.sm { font-size: 12px; padding: 7px 11px; margin-top: 10px; border: 0; border-radius: 3px; background: #fff; color: var(--ink); box-shadow: 0 0 0 1px #1d2630, 0 2px 0 #1d2630; }
+.wlist { display: grid; gap: 8px; margin: 10px 0; }
+.wbtn {
+  display: block; text-align: left; font: 11px var(--title); padding: 12px; border: 0; border-radius: 4px;
+  background: #2c3256; color: #fff6d8; text-decoration: none; box-shadow: 0 3px 0 #14172a;
+}
+.wbtn:hover { background: #363d6a; }
+
+.toast {
+  position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom)); transform: translate(-50%, 140%);
+  background: #14172a; color: #fff6d8; padding: 10px 14px; border-radius: 4px; font-size: 13px; max-width: min(92vw, 520px);
+  box-shadow: 0 0 0 2px var(--gold); font-family: var(--mono); transition: transform .25s ease, visibility .25s; z-index: 30; visibility: hidden;
+}
+.toast.show { transform: translate(-50%, 0); visibility: visible; }
+
+@media (prefers-reduced-motion: reduce) {
+  .next { animation: none; }
+  .toast { transition: none; }
+}
+
+.warn { color: #9a3a10; }
+.check { display: flex; gap: 8px; align-items: flex-start; margin: 10px 0; font-size: 12px; }
+.check input { margin-top: 3px; width: 16px; height: 16px; flex: none; }
+.mbox button.sm:disabled { opacity: .45; cursor: default; }
+
+</style>
+  <script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@1.95.8/lib/index.iife.min.js"></script>
+</head>
+<body class="route-landing">
+  <header class="site-head">
+    <a class="brand-link" href="#/" aria-label="Route 151 home">
+      <span class="logo-box"><canvas class="logo-canvas" aria-hidden="true"></canvas></span>
+      <span class="brand-name">ROUTE <b>151</b></span>
+    </a>
+    <nav class="quick-nav" aria-label="Site sections">
+      <a class="qn-enter" href="#/play" data-nav="play">Enter the world <span aria-hidden="true">↗</span></a>
+      <a href="#/" data-scroll="adventure" data-nav="adventure">The adventure</a>
+      <a href="#/" data-scroll="world" data-nav="world">The world</a>
+      <a href="#/" data-scroll="how" data-nav="how">How it works</a>
+    </nav>
+    <div class="head-right">
+      <a class="back-link play-only" href="#/">Back to site</a>
+      <span id="netChip" class="chip play-only hidden"></span>
+      <span id="solChip" class="chip play-only hidden"></span>
+      <span id="tokChip" class="chip gold play-only"></span>
+      <button id="walletBtn" class="btn-wallet" type="button">Connect wallet</button>
+    </div>
+  </header>
+
+  <!-- ==================== Landing ==================== -->
+  <main id="view-landing">
+    <div class="hero-band">
+    <div class="clouds" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    <section class="hero" id="top-of-page">
+      <div class="hero-copy">
+        <p class="eyebrow"><i aria-hidden="true"></i>Your next adventure starts here</p>
+        <h1>Small world.<br><span>Wild possibilities.</span></h1>
+        <p class="lede">Be the creature. Pick your starter, wander the tall grass, and make your own way through Route 151.</p>
+        <div class="cta-row">
+          <a class="btn-enter" href="#/play">Enter the world <span aria-hidden="true">↗</span></a>
+          <a class="btn-how" href="#how" data-scroll="how">How it works <span aria-hidden="true">↓</span></a>
+        </div>
+        <ul class="ticks">
+          <li>Free to play</li>
+          <li>No wallet to start</li>
+          <li>Real graded cards</li>
+        </ul>
+      </div>
+      <figure class="hero-art">
+        <div class="pixel-frame">
+          <canvas class="hero-logo" aria-label="Route 151 island logo"></canvas>
+          <figcaption>Tall grass. Big adventures.</figcaption>
+        </div>
+      </figure>
+    </section>
+    <div class="shore" aria-hidden="true"></div>
+    </div>
+
+    <div class="strip">
+      <ul>
+        <li>Choose your starter</li>
+        <li>Explore the routes</li>
+        <li>Take on a job</li>
+        <li>Build your collection</li>
+      </ul>
+      <a class="strip-down" href="#adventure" data-scroll="adventure" aria-label="Scroll to the adventure">↓</a>
+    </div>
+
+    <div class="band band-night">
+    <section class="block" id="adventure">
+      <div class="block-head">
+        <div>
+          <p class="kicker">01 / The adventure</p>
+          <h2>Your route. Your rules.</h2>
+        </div>
+        <p class="aside">Three starters. One open world.<br>Where you go next is up to you.</p>
+      </div>
+      <div class="showcase">
+        <div class="mini-ds">
+          <div class="mini-lid">
+            <span class="spk" aria-hidden="true"></span>
+            <div class="mini-screen"><canvas id="attract" width="256" height="192" aria-label="The overworld"></canvas></div>
+            <span class="spk" aria-hidden="true"></span>
+          </div>
+          <div class="mini-hinge" aria-hidden="true"></div>
+          <div class="mini-base">
+            <span class="mini-dpad" aria-hidden="true"></span>
+            <div class="mini-screen low">
+              <div class="pick">
+                <p>Who will you be?</p>
+                <div class="pick-row">
+                  <a href="#/play?starter=burrbo" class="pick-card"><canvas data-sprite="burrbo"></canvas><b>Bulbasaur</b><span class="type t-grass">grass</span></a>
+                  <a href="#/play?starter=embrit" class="pick-card"><canvas data-sprite="embrit"></canvas><b>Charmander</b><span class="type t-fire">fire</span></a>
+                  <a href="#/play?starter=puddlit" class="pick-card"><canvas data-sprite="puddlit"></canvas><b>Totodile</b><span class="type t-water">water</span></a>
+                </div>
+              </div>
+            </div>
+            <span class="mini-ab" aria-hidden="true"><i class="a"></i><i class="b"></i></span>
+          </div>
+        </div>
+        <p class="showcase-note">Tap a starter to begin. Move with arrows or WASD, A is Z or Enter.</p>
+      </div>
+    </section>
+    </div>
+
+    <div class="band band-cream">
+    <section class="block" id="world">
+      <div class="block-head">
+        <div>
+          <p class="kicker">02 / Off the beaten path</p>
+          <h2>A little world to get lost in.</h2>
+        </div>
+        <p class="aside">Leave town. Follow your curiosity.</p>
+      </div>
+      <div class="places">
+        <article class="place z-routes">
+          <canvas class="scene" data-scene="routes" aria-label="Tall grass on the route"></canvas>
+          <p class="place-tag">The routes</p>
+          <h3>Into the tall grass.</h3>
+          <p>Meet wild creatures, train your starter, and find a new path through the trees.</p>
+        </article>
+        <article class="place z-caves">
+          <canvas class="scene" data-scene="caves" aria-label="Inside Glimmer Cave"></canvas>
+          <p class="place-tag">The caves</p>
+          <h3>A little deeper.</h3>
+          <p>Step underground, gather glimmer ore, and face whatever hides in the dark.</p>
+        </article>
+        <article class="place z-dens">
+          <canvas class="scene" data-scene="dens" aria-label="Venusaur in the den"></canvas>
+          <p class="place-tag">The dens</p>
+          <h3>Meet your match.</h3>
+          <p>Build your strength and take on Venusaur in the den. Come prepared.</p>
+        </article>
+      </div>
+    </section>
+    </div>
+
+    <div class="band band-sun">
+    <section class="block" id="how">
+      <div class="block-head">
+        <div>
+          <p class="kicker">03 / From route to collection</p>
+          <h2>Adventure comes first.</h2>
+        </div>
+        <p class="badge">Settled in Collector Crypt cards</p>
+      </div>
+      <ol class="steps">
+        <li>
+          <span class="num">01</span>
+          <h3>Pick a starter.</h3>
+          <p>Start free with Charmander, Totodile or Bulbasaur. No wallet needed to enter the world.</p>
+        </li>
+        <li>
+          <span class="num">02</span>
+          <h3>Find your next job.</h3>
+          <p>Make deliveries, win battles, gather ore, and challenge the den boss.</p>
+        </li>
+        <li>
+          <span class="num">03</span>
+          <h3>Grow your collection.</h3>
+          <p>Every clear pays a graded Collector Crypt card. Burn BOOST when you claim to push the grade toward a PSA 10.</p>
+        </li>
+      </ol>
+      <div class="final-cta">
+        <a class="btn-enter alt" href="#/play">Enter the world <span aria-hidden="true">↗</span></a>
+      </div>
+    </section>
+    </div>
+
+    <footer class="site-foot">
+      <a class="brand-link" href="#/" data-scroll="top-of-page">
+        <span class="logo-box sm"><canvas class="logo-canvas" aria-hidden="true"></canvas></span>
+        <span class="brand-name">ROUTE <b>151</b></span>
+      </a>
+      <p>A small world. An adventure of your own.</p>
+      <a class="foot-top" href="#/" data-scroll="top-of-page">Back to the route ↑</a>
+    </footer>
+  </main>
+
+  <!-- ==================== Game ==================== -->
+  <main id="view-play" class="console" aria-label="Game" hidden>
+    <div class="lid">
+      <span class="speaker" aria-hidden="true"></span>
+      <div class="screen top-screen">
+        <canvas id="top" width="256" height="192" aria-label="Game world"></canvas>
+      </div>
+      <span class="speaker" aria-hidden="true"></span>
+    </div>
+    <div class="hinge" aria-hidden="true"><i></i><i></i></div>
+    <div class="base">
+      <div class="dpad" role="group" aria-label="Direction pad">
+        <button type="button" data-dir="up" aria-label="Up" class="d up"></button>
+        <button type="button" data-dir="left" aria-label="Left" class="d left"></button>
+        <span class="d mid" aria-hidden="true"></span>
+        <button type="button" data-dir="right" aria-label="Right" class="d right"></button>
+        <button type="button" data-dir="down" aria-label="Down" class="d down"></button>
+      </div>
+      <div class="screen bottom-screen">
+        <div class="bottom-inner">
+          <nav class="tabs" aria-label="Bottom screen">
+            <button type="button" data-tab="bag" class="on">Bag</button>
+            <button type="button" data-tab="map">Map</button>
+            <button type="button" data-tab="jobs">Jobs</button>
+            <button type="button" data-tab="market">Market</button>
+          </nav>
+          <section id="panel" class="panel" aria-live="polite"></section>
+        </div>
+      </div>
+      <div class="ab" role="group" aria-label="Action buttons">
+        <button type="button" data-key="b" class="k b" aria-label="B button">B</button>
+        <button type="button" data-key="a" class="k a" aria-label="A button">A</button>
+      </div>
+    </div>
+    <p class="help">Move with arrows or WASD. A is Z, Enter or Space. B is X or Esc.</p>
+  </main>
+
+  <div id="modal" class="modal hidden"></div>
+  <div id="toast" class="toast" role="status"></div>
+
+  <script>
+// Route 151 — client configuration. Game rules live in core.js (shared with the server).
+window.R151 = window.R151 || {};
+
+R151.config = {
+  cluster: 'mainnet-beta',
+  // An RPC with DAS support (getAssetsByOwner) for reading vault cards.
+  rpcUrl: 'https://api.mainnet-beta.solana.com',
+
+  // BOOST token (SPL, classic Token Program) and the treasury that receives half of each burn.
+  // Real burns only happen when apiBase is set too, so the server can verify them.
+  boosterMint: '',
+  boosterDecimals: 6,
+  treasuryWallet: '',
+
+  // Collector Crypt verified collection address.
+  vaultCollection: '',
+
+  // Game server that runs the world and settles claims. server/server.js sets this to '/api'
+  // automatically through js/runtime.js. Without a server the world is playable offline,
+  // but jobs can't be claimed.
+  apiBase: '',
+};
+
+</script>
+    <script>
+// Route 151 — shared game engine.
+// The same file runs on the server (authoritative) and in the browser (offline play), so the server
+// can replay every player action and decide movement, encounters, battles and job progress itself.
+(function () {
+  const R = typeof window !== 'undefined' ? (window.R151 = window.R151 || {}) : {};
+
+  // ---------- Rules ----------
+  R.RULES = { freeLevelCap: 20, burnShare: 0.5, resaleFeeBps: 500, stepMinMs: 90 };
+
+  R.TIERS = [
+    { id: 'common',   name: 'Common',   grade: 'Raw to PSA 7', color: '#8f9aa6', value: [6, 14] },
+    { id: 'uncommon', name: 'Uncommon', grade: 'PSA 8',        color: '#3fae96', value: [30, 70] },
+    { id: 'rare',     name: 'Rare',     grade: 'PSA 9',        color: '#6a78ff', value: [120, 320] },
+    { id: 'grail',    name: 'Grail',    grade: 'PSA 10',       color: '#f2b632', value: [800, 2400] },
+  ];
+  R.BOOSTS = [
+    { id: 'none',  name: 'Free clear', burn: 0,    weights: [70, 22, 7, 1] },
+    { id: 'spark', name: 'Spark',      burn: 100,  weights: [35, 40, 20, 5] },
+    { id: 'surge', name: 'Surge',      burn: 500,  weights: [10, 35, 40, 15] },
+    { id: 'grail', name: 'Grail push', burn: 2500, weights: [0, 10, 40, 50] },
+  ];
+  R.GRADE_CAPS = [[10, 100], [9.5, 90], [9, 80], [8.5, 70], [8, 60], [7, 50], [0, 40]];
+
+  // ---------- Creatures ----------
+  R.SPECIES = {
+    embrit:   { name: 'Charmander', type: 'fire',  move: 'Ember',      starter: true },
+    puddlit:  { name: 'Totodile',   type: 'water', move: 'Water Gun',  starter: true },
+    burrbo:   { name: 'Bulbasaur',  type: 'grass', move: 'Vine Whip',  starter: true },
+    gnatling: { name: 'Caterpie',   type: 'bug' },
+    pebbit:   { name: 'Geodude',    type: 'rock' },
+    gloomote: { name: 'Gastly',     type: 'ghost' },
+    thornox:  { name: 'Venusaur',   type: 'grass', boss: true, move: 'Razor Leaf' },
+  };
+  R.TYPE = {
+    fire:  { strong: ['leaf', 'bug', 'thorn'], weak: ['water', 'rock'] },
+    water: { strong: ['fire', 'rock'],         weak: ['leaf', 'thorn'] },
+    grass: { strong: ['water', 'rock'],        weak: ['fire', 'bug'] },
+    leaf:  { strong: ['water', 'rock'],        weak: ['fire', 'bug'] },
+    bug:   { strong: ['leaf'],                 weak: ['fire', 'rock'] },
+    rock:  { strong: ['fire', 'bug'],          weak: ['water', 'leaf'] },
+    ghost: { strong: [],                       weak: [] },
+    shade: { strong: [],                       weak: [] },
+    thorn: { strong: ['water'],                weak: ['fire'] },
+  };
+  R.typeMult = (a, d) => {
+    const t = R.TYPE[a];
+    if (!t) return 1;
+    return t.strong.includes(d) ? 1.5 : t.weak.includes(d) ? 0.67 : 1;
+  };
+
+  // ---------- Tiles + maps ----------
+  R.T = {
+    GRASS: 0, TALL: 1, PATH: 2, WATER: 3, TREE: 4, WALL: 5, ROOF: 6, DOOR: 7,
+    CAVEF: 8, ROCK: 9, CAVE: 10, SAND: 11, FLOWER: 12, SIGN: 13, DEN: 14,
+    FENCE: 15, BRIDGE: 16, ROOFB: 17, STALL: 18, WELL: 19, EXIT: 20, ORE: 21,
+    DENF: 22, THORN: 23, BOSS: 24, MAIL: 25, WINDOW: 26,
+  };
+  const T = R.T;
+  R.SOLID = new Set([T.WATER, T.TREE, T.WALL, T.ROOF, T.ROOFB, T.DOOR, T.ROCK, T.SIGN,
+    T.FENCE, T.STALL, T.WELL, T.ORE, T.THORN, T.BOSS, T.MAIL, T.WINDOW]);
+
+  function makeMap(id, w, h, fill, edge) {
+    return { id, w, h, t: new Array(w * h).fill(fill), edge, warps: [], spots: {}, doors: {} };
+  }
+  const set = (m, x, y, t) => { if (x >= 0 && y >= 0 && x < m.w && y < m.h) m.t[y * m.w + x] = t; };
+  const rect = (m, x, y, w, h, t) => { for (let j = y; j < y + h; j++) for (let i = x; i < x + w; i++) set(m, i, j, t); };
+  R.getTile = (m, x, y) => (x < 0 || y < 0 || x >= m.w || y >= m.h) ? m.edge : m.t[y * m.w + x];
+
+  function house(m, x, y, w, roof, dx, label, id) {
+    rect(m, x, y, w, 2, roof);
+    rect(m, x, y + 2, w, 2, T.WALL);
+    set(m, x + 1, y + 2, T.WINDOW);
+    set(m, x + w - 2, y + 2, T.WINDOW);
+    set(m, dx, y + 3, T.DOOR);
+    m.spots[dx + ',' + (y + 3)] = { kind: 'door', id, label };
+    m.doors[id] = { x: dx, y: y + 3, label };
+  }
+
+  function overworld() {
+    const m = makeMap('overworld', 56, 40, T.GRASS, T.TREE);
+    rect(m, 30, 2, 24, 6, T.ROCK);
+    let seed = 1337;
+    const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+    for (let y = 10; y < 30; y++) for (let x = 34; x < 54; x++) if (rnd() < 0.3) set(m, x, y, T.TREE);
+    rect(m, 12, 11, 8, 7, T.TALL);
+    rect(m, 3, 12, 5, 8, T.TALL);
+    rect(m, 24, 9, 5, 5, T.TALL);
+    rect(m, 36, 23, 7, 5, T.TALL);
+    for (const [x, y] of [[22, 15], [23, 16], [33, 18], [34, 22], [8, 21], [15, 20], [27, 25], [29, 26], [20, 28]]) set(m, x, y, T.FLOWER);
+    rect(m, 24, 17, 9, 7, T.WATER);
+    rect(m, 44, 30, 10, 8, T.SAND);
+    rect(m, 44, 36, 10, 2, T.WATER);
+    rect(m, 45, 25, 3, 3, T.GRASS);
+    rect(m, 3, 31, 20, 1, T.PATH);
+    rect(m, 10, 6, 1, 26, T.PATH);
+    rect(m, 6, 9, 5, 1, T.PATH);
+    set(m, 6, 8, T.PATH);
+    rect(m, 10, 21, 40, 1, T.PATH);
+    rect(m, 40, 8, 1, 13, T.PATH);
+    rect(m, 46, 22, 1, 4, T.PATH);
+    rect(m, 49, 22, 1, 8, T.PATH);
+    set(m, 6, 30, T.PATH);
+    set(m, 14, 30, T.PATH);
+    rect(m, 3, 32, 1, 6, T.PATH);
+    rect(m, 3, 37, 4, 1, T.PATH);
+    rect(m, 24, 21, 9, 1, T.BRIDGE);
+    set(m, 40, 7, T.CAVE);
+    set(m, 46, 26, T.DEN);
+    house(m, 4, 4, 5, T.ROOF, 6, 'Hilltop Farm', 'farm');
+    house(m, 4, 26, 5, T.ROOF, 6, 'Your Burrow', 'home');
+    house(m, 12, 26, 6, T.ROOFB, 14, 'Post Office', 'post');
+    house(m, 4, 33, 5, T.ROOF, 6, 'Mossy Cottage', 'cottage');
+    house(m, 46, 31, 6, T.ROOFB, 49, 'Cove Lookout', 'cove');
+    rect(m, 2, 24, 21, 1, T.FENCE);
+    set(m, 10, 24, T.PATH);
+    set(m, 12, 32, T.SIGN);
+    set(m, 16, 30, T.MAIL);
+    set(m, 17, 32, T.STALL);
+    set(m, 18, 32, T.STALL);
+    set(m, 20, 33, T.WELL);
+    rect(m, 0, 0, 56, 2, T.TREE);
+    rect(m, 0, 38, 56, 2, T.TREE);
+    rect(m, 0, 0, 2, 40, T.TREE);
+    rect(m, 54, 0, 2, 40, T.TREE);
+    m.warps.push({ x: 40, y: 7, to: 'cave', tx: 15, ty: 17, dir: 'up' });
+    m.warps.push({ x: 46, y: 26, to: 'den', tx: 10, ty: 11, dir: 'up' });
+    m.respawn = { x: 20, y: 32 };
+    return m;
+  }
+  function cave() {
+    const m = makeMap('cave', 30, 20, T.ROCK, T.ROCK);
+    rect(m, 13, 14, 5, 5, T.CAVEF);
+    set(m, 15, 19, T.EXIT);
+    rect(m, 15, 9, 1, 5, T.CAVEF);
+    rect(m, 11, 4, 9, 5, T.CAVEF);
+    rect(m, 5, 6, 6, 1, T.CAVEF);
+    rect(m, 2, 2, 4, 8, T.CAVEF);
+    rect(m, 20, 6, 4, 1, T.CAVEF);
+    rect(m, 24, 3, 4, 11, T.CAVEF);
+    rect(m, 18, 16, 8, 1, T.CAVEF);
+    rect(m, 25, 13, 1, 4, T.CAVEF);
+    m.ores = [[3, 1], [28, 10], [13, 3]];
+    for (const [x, y] of m.ores) set(m, x, y, T.ORE);
+    m.warps.push({ x: 15, y: 19, to: 'overworld', tx: 40, ty: 8, dir: 'down' });
+    return m;
+  }
+  function den() {
+    const m = makeMap('den', 20, 14, T.THORN, T.THORN);
+    rect(m, 3, 2, 14, 10, T.DENF);
+    for (const [x, y] of [[6, 5], [13, 5], [6, 8], [13, 8]]) set(m, x, y, T.THORN);
+    set(m, 10, 12, T.EXIT);
+    set(m, 10, 3, T.BOSS);
+    m.boss = { x: 10, y: 3 };
+    m.warps.push({ x: 10, y: 12, to: 'overworld', tx: 46, ty: 25, dir: 'down' });
+    return m;
+  }
+  R.maps = { overworld: overworld(), cave: cave(), den: den() };
+
+  R.areaName = function (m, x, y) {
+    if (m.id === 'cave') return 'Glimmer Cave';
+    if (m.id === 'den') return 'Thorn Den';
+    if (x <= 22 && y >= 25) return 'Lantern Hollow';
+    if (x <= 9 && y <= 10) return 'Hilltop Farm';
+    if (x >= 43 && y >= 29) return 'Cove Lookout';
+    if (x >= 33 && y >= 9) return 'Thornwood';
+    if (y <= 9 && x >= 24) return 'Ridge Cliffs';
+    if (x >= 22 && x <= 34 && y >= 15 && y <= 25) return 'Glass Pond';
+    return 'Sway Route';
+  };
+
+  // ---------- Jobs ----------
+  R.JOBS = [
+    { id: 'parcel-farm', title: 'Parcel run to Hilltop Farm', kind: 'deliver', from: 'post', to: 'farm', toLabel: 'Hilltop Farm',
+      area: 'Post Office to Hilltop Farm', pool: 'Gen 1 Grass-type' },
+    { id: 'parcel-cove', title: 'Parcel run to Cove Lookout', kind: 'deliver', from: 'post', to: 'cove', toLabel: 'Cove Lookout',
+      area: 'Post Office to Cove Lookout', pool: 'Gen 1 Water-type' },
+    { id: 'parcel-cottage', title: 'Parcel run to Mossy Cottage', kind: 'deliver', from: 'post', to: 'cottage', toLabel: 'Mossy Cottage',
+      area: 'Post Office to Mossy Cottage', pool: 'Gen 1 Normal-type' },
+    { id: 'grass-sweep', title: 'Tall grass sweep', kind: 'defeat', where: 'grass', count: 4,
+      area: 'Any tall grass on the overworld', pool: 'Gen 1 Bug-type' },
+    { id: 'glimmer', title: 'Glimmer ore', kind: 'collect', count: 3,
+      area: 'Glimmer Cave, under Ridge Cliffs', pool: 'Gen 1 Rock-type' },
+    { id: 'thorn-den', title: 'Clear the Thorn Den', kind: 'boss', minLevel: 12,
+      area: 'Den entrance in Thornwood', pool: 'Gen 1 Fire-type' },
+  ];
+  const jobById = id => R.JOBS.find(j => j.id === id);
+
+  // ---------- Engine ----------
+  const C = R.Core = {};
+  const DIRS = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] };
+  C.DIRS = DIRS;
+
+  C.newState = () => ({
+    v: 2, map: 'overworld', x: 10, y: 30, dir: 'down',
+    starter: null, lvl: 5, xp: 0, hp: 47,
+    bag: { berry: 3, parcel: 0 },
+    jobs: {}, active: null, cards: [], bound: null, battle: null,
+    credits: 0, cleared: { cave: {} }, bossDown: false,
+    stats: { burned: 0, toCards: 0, fees: 0, buyback: 0, awarded: 0 },
+  });
+
+  C.capForGrade = g => { for (const [min, cap] of R.GRADE_CAPS) if ((g || 0) >= min) return cap; return R.RULES.freeLevelCap; };
+  C.levelCap = s => s.bound ? C.capForGrade(s.bound.gradeNum) : R.RULES.freeLevelCap;
+  C.maxHp = lvl => 22 + lvl * 5;
+  C.atk = lvl => 6 + lvl * 2.2;
+  C.xpNeed = lvl => lvl * 12;
+  C.job = jobById;
+  C.js = (s, id) => (s.jobs[id] = s.jobs[id] || { status: 'open', progress: 0, parcel: false });
+
+  C.tileAt = function (s, m, x, y) {
+    const t = R.getTile(m, x, y);
+    if (t === T.ORE && s.cleared.cave && s.cleared.cave[x + ',' + y]) return T.CAVEF;
+    if (t === T.BOSS && s.bossDown) return T.DENF;
+    return t;
+  };
+  C.walkable = (s, map, x, y) => {
+    const m = R.maps[map];
+    return x >= 0 && y >= 0 && x < m.w && y < m.h && !R.SOLID.has(C.tileAt(s, m, x, y));
+  };
+
+  C.objective = function (s, id) {
+    const j = jobById(id), js = C.js(s, id);
+    if (js.status === 'ready') return 'Done. Claim your card on the Jobs tab.';
+    switch (j.kind) {
+      case 'deliver': return js.parcel ? `Deliver the parcel to ${j.toLabel}` : 'Pick up a parcel at the Post Office door';
+      case 'defeat': return `Win battles in tall grass (${js.progress}/${j.count})`;
+      case 'collect': return `Mine glimmer ore in the cave (${js.progress}/${j.count})`;
+      case 'boss': return `Beat the den boss (recommended Lv ${j.minLevel})`;
+    }
+    return '';
+  };
+
+  C.target = function (s) {
+    if (!s.active) return null;
+    const j = jobById(s.active), js = C.js(s, s.active), ow = R.maps.overworld;
+    if (js.status === 'ready') return { map: 'overworld', x: 12, y: 32 };
+    switch (j.kind) {
+      case 'deliver': { const d = ow.doors[js.parcel ? j.to : j.from]; return { map: 'overworld', x: d.x, y: d.y }; }
+      case 'defeat': return { map: 'overworld', x: 15, y: 14 };
+      case 'collect': {
+        if (s.map === 'cave') {
+          const ore = R.maps.cave.ores.find(([x, y]) => !(s.cleared.cave || {})[x + ',' + y]);
+          if (ore) return { map: 'cave', x: ore[0], y: ore[1] };
+        }
+        return { map: 'overworld', x: 40, y: 7 };
+      }
+      case 'boss': return s.map === 'den' ? { map: 'den', x: 10, y: 3 } : { map: 'overworld', x: 46, y: 26 };
+    }
+    return null;
+  };
+
+  function jobEvent(s, e, ev) {
+    if (!s.active) return null;
+    const job = jobById(s.active), js = C.js(s, s.active);
+    if (js.status !== 'active') return null;
+    const complete = () => { js.status = 'ready'; ev.push({ k: 'toast', text: 'Objective clear. Claim your card on the Jobs tab.' }); };
+    switch (job.kind) {
+      case 'deliver':
+        if (e.type === 'door' && e.id === job.from && !js.parcel) { js.parcel = true; s.bag.parcel = 1; return 'picked'; }
+        if (e.type === 'door' && e.id === job.to && js.parcel) { js.parcel = false; s.bag.parcel = 0; complete(); return 'delivered'; }
+        break;
+      case 'defeat':
+        if (e.type === 'defeat' && e.where === job.where) { js.progress++; if (js.progress >= job.count) complete(); return 'progress'; }
+        break;
+      case 'collect':
+        if (e.type === 'ore') { js.progress++; if (js.progress >= job.count) complete(); return 'progress'; }
+        break;
+      case 'boss':
+        if (e.type === 'defeat' && e.boss) { complete(); return 'progress'; }
+        break;
+    }
+    return null;
+  }
+
+  function heal(s) { s.hp = C.maxHp(s.lvl); }
+
+  function startBattle(s, id, lvl, where, boss, ev) {
+    const emax = Math.round((16 + lvl * 4) * (boss ? 2.4 : 1));
+    s.battle = { id, lvl, boss, where, ehp: emax, emax, eatk: (4 + lvl * 1.9) * (boss ? 1.15 : 1) };
+    const name = R.SPECIES[id].name;
+    ev.push({ k: 'bstart', id, lvl, boss, where, emax, php: s.hp,
+      text: boss ? `${name} blocks the back of the den.` : `A wild ${name} (Lv ${lvl}) jumps out.` });
+  }
+
+  function endBattle(s, result, ev) {
+    if (result === 'faint') {
+      const rp = R.maps.overworld.respawn;
+      s.map = 'overworld'; s.x = rp.x; s.y = rp.y; s.dir = 'down';
+      heal(s);
+    }
+    s.battle = null;
+    ev.push({ k: 'bend', result });
+  }
+
+  function battleAct(s, i, rng, ev) {
+    const b = s.battle, sp = R.SPECIES[s.starter], e = R.SPECIES[b.id];
+    const msg = (text, extra) => ev.push(Object.assign({ k: 'bmsg', text }, extra || {}));
+    if (i === 3) {
+      if (b.boss) { msg('Thorns close the way out. No running here.'); return; }
+      if (rng() < 0.75) { msg('You slip away into the grass.'); return endBattle(s, 'run', ev); }
+      msg(`${e.name} cuts you off.`);
+    } else if (i === 2) {
+      if (!s.bag.berry) { msg('No berries left in the bag.'); return; }
+      s.bag.berry--;
+      const amt = Math.round(C.maxHp(s.lvl) * 0.4);
+      s.hp = Math.min(C.maxHp(s.lvl), s.hp + amt);
+      msg(`${sp.name} eats a berry and recovers ${amt} HP.`, { php: s.hp });
+    } else {
+      const sig = i === 1, name = sig ? sp.move : 'Strike';
+      if (rng() > (sig ? 0.88 : 0.97)) {
+        msg(`${sp.name} uses ${name}, but misses.`);
+      } else {
+        const mult = sig ? R.typeMult(sp.type, e.type) : 1;
+        const dmg = Math.max(1, Math.round(C.atk(s.lvl) * (sig ? 1.45 : 1) * mult * (0.85 + rng() * 0.3) * 0.55));
+        b.ehp = Math.max(0, b.ehp - dmg);
+        msg(`${sp.name} uses ${name} for ${dmg} damage.`, { ehp: b.ehp, fe: 1 });
+        if (mult > 1) msg('It hits a weak spot.');
+        else if (mult < 1) msg('It barely lands.');
+        if (b.ehp <= 0) return win(s, rng, ev);
+      }
+    }
+    // Enemy turn
+    const mult = R.typeMult(e.type, sp.type);
+    const dmg = Math.max(1, Math.round(b.eatk * (0.85 + rng() * 0.3) * 0.5 * mult));
+    s.hp = Math.max(0, s.hp - dmg);
+    msg(`${e.name} ${b.boss ? `uses ${e.move}` : 'attacks'} for ${dmg} damage.`, { php: s.hp, fp: 1 });
+    if (s.hp <= 0) {
+      msg(`${sp.name} faints.`);
+      msg('You wake up beside the spring in Lantern Hollow.');
+      endBattle(s, 'faint', ev);
+    }
+  }
+
+  function win(s, rng, ev) {
+    const b = s.battle, e = R.SPECIES[b.id], sp = R.SPECIES[s.starter];
+    const msg = (text, extra) => ev.push(Object.assign({ k: 'bmsg', text }, extra || {}));
+    msg(`${e.name} is out of the fight.`, { ehp: 0 });
+    const cap = C.levelCap(s);
+    if (s.lvl >= cap) {
+      msg(`${sp.name} is at its level cap (${cap}).`);
+      msg(s.bound ? 'This grade caps here. A higher grade raises it.' : 'Bind a vault card in the bag to raise the cap.');
+    } else {
+      const gain = Math.round(b.lvl * 7 * (b.boss ? 4 : 1));
+      s.xp += gain;
+      msg(`Gained ${gain} XP.`);
+      while (s.xp >= C.xpNeed(s.lvl) && s.lvl < cap) {
+        s.xp -= C.xpNeed(s.lvl);
+        s.lvl++;
+        s.hp = Math.min(C.maxHp(s.lvl), s.hp + 5);
+        msg(`${sp.name} reaches Lv ${s.lvl}.`);
+      }
+      if (s.lvl >= cap) s.xp = 0;
+    }
+    if (b.boss) s.bossDown = true;
+    jobEvent(s, { type: 'defeat', where: b.where, boss: b.boss }, ev);
+    if (!b.boss && rng() < 0.25) { s.bag.berry++; msg('You find a berry in the grass.'); }
+    endBattle(s, 'win', ev);
+  }
+
+  function interact(s, rng, ev) {
+    const m = R.maps[s.map], [dx, dy] = DIRS[s.dir];
+    const x = s.x + dx, y = s.y + dy, t = C.tileAt(s, m, x, y), spot = m.spots[x + ',' + y];
+    const dialog = (title, lines) => ev.push({ k: 'dialog', title, lines });
+    if (t === T.SIGN) {
+      ev.push({ k: 'tab', tab: 'jobs' });
+      return dialog('Job board', ['Jobs pay real vault cards, bought by the treasury.', 'Burn BOOST when you claim to push the grade toward a PSA 10.']);
+    }
+    if ((t === T.DOOR && spot) || t === T.MAIL) {
+      const sp = t === T.MAIL ? { id: 'post', label: 'Post Office' } : spot;
+      const r = jobEvent(s, { type: 'door', id: sp.id }, ev);
+      if (r === 'picked') return dialog(sp.label, ['A parcel is waiting for you.', `Deliver it to ${jobById(s.active).toLabel}.`]);
+      if (r === 'delivered') return dialog(sp.label, ['Parcel delivered.', 'Open the Jobs tab to claim your card.']);
+      if (sp.id === 'home') { heal(s); return dialog(sp.label, ['You curl up for a nap. HP restored.']); }
+      const lines = {
+        post: 'Parcels go out to Hilltop Farm, Mossy Cottage and Cove Lookout. Take a parcel run on the job board.',
+        farm: 'Nothing due today, little one.',
+        cove: 'The keeper waves down from the lamp room.',
+        cottage: 'It smells like moss tea inside.',
+      };
+      return dialog(sp.label, [lines[sp.id] || 'Nobody answers.']);
+    }
+    if (t === T.STALL) {
+      ev.push({ k: 'tab', tab: 'market' });
+      return dialog('Market stall', ['Resell earned cards from your bag.', `A ${R.RULES.resaleFeeBps / 100}% fee on every sale buys back BOOST.`]);
+    }
+    if (t === T.WELL) { heal(s); return dialog('Spring', [`${R.SPECIES[s.starter].name} drinks from the spring and feels rested.`]); }
+    if (t === T.ORE) {
+      if (s.active === 'glimmer' && C.js(s, 'glimmer').status === 'active') {
+        s.cleared.cave[x + ',' + y] = true;
+        jobEvent(s, { type: 'ore' }, ev);
+        return dialog('Glimmer ore', [`You pry loose a glowing shard (${C.js(s, 'glimmer').progress}/3).`]);
+      }
+      return dialog('Glimmer ore', ['A vein of glowing ore.', 'Take the Glimmer ore job to mine it.']);
+    }
+    if (t === T.BOSS) return startBattle(s, 'thornox', 14, 'den', true, ev);
+    if (t === T.WATER) ev.push({ k: 'toast', text: 'The water is calm and cold.' });
+  }
+
+  function step(s, dir, rng, ev) {
+    s.dir = dir;
+    const [dx, dy] = DIRS[dir], nx = s.x + dx, ny = s.y + dy;
+    if (!C.walkable(s, s.map, nx, ny)) { ev.push({ k: 'blocked' }); return; }
+    s.x = nx; s.y = ny;
+    const m = R.maps[s.map];
+    const w = m.warps.find(w => w.x === nx && w.y === ny);
+    if (w) {
+      s.map = w.to; s.x = w.tx; s.y = w.ty; s.dir = w.dir;
+      ev.push({ k: 'warp' });
+      return;
+    }
+    const t = C.tileAt(s, m, nx, ny);
+    let rate = 0, table = null, where = s.map;
+    if (s.map === 'overworld' && t === T.TALL) { rate = 0.12; where = 'grass'; table = [['gnatling', 3, 8, 0.6], ['pebbit', 4, 9, 1]]; }
+    else if (s.map === 'cave' && t === T.CAVEF) { rate = 0.07; table = [['gloomote', 7, 12, 0.6], ['pebbit', 8, 12, 1]]; }
+    else if (s.map === 'den' && t === T.DENF) { rate = 0.1; table = [['gloomote', 10, 13, 0.5], ['gnatling', 9, 13, 1]]; }
+    if (table && rng() < rate) {
+      const r = rng();
+      const [id, lo, hi] = table.find(e => r < e[3]);
+      startBattle(s, id, lo + Math.floor(rng() * (hi - lo + 1)), where, false, ev);
+    }
+  }
+
+  function accept(s, id, ev) {
+    if (s.active && s.active !== id) {
+      const prev = C.js(s, s.active);
+      if (prev.status === 'active') Object.assign(prev, { status: 'open', progress: 0, parcel: false });
+    }
+    Object.assign(C.js(s, id), { status: 'active', progress: 0, parcel: false });
+    s.bag.parcel = 0;
+    if (id === 'glimmer') s.cleared.cave = {};
+    if (id === 'thorn-den') s.bossDown = false;
+    s.active = id;
+    ev.push({ k: 'toast', text: 'Job taken: ' + jobById(id).title });
+  }
+
+  // Apply one player action. `opts.verifiedCard` is required for "bind" and must come from a
+  // trusted source: the server's own on-chain read of the player's wallet.
+  C.apply = function (s, a, rng, opts) {
+    opts = opts || {};
+    const ev = [];
+    const fail = error => ({ ok: false, error, events: ev });
+    if (!a || typeof a.type !== 'string') return fail('bad action');
+    const needPlay = () => !s.starter ? 'Pick a starter first.' : null;
+
+    switch (a.type) {
+      case 'starter':
+        if (s.starter) return fail('Starter already chosen.');
+        if (!R.SPECIES[a.id] || !R.SPECIES[a.id].starter) return fail('Unknown starter.');
+        s.starter = a.id; s.lvl = 5; s.xp = 0; heal(s);
+        break;
+      case 'step':
+        if (needPlay()) return fail(needPlay());
+        if (s.battle) return fail('Finish the battle first.');
+        if (!DIRS[a.dir]) return fail('Bad direction.');
+        step(s, a.dir, rng, ev);
+        break;
+      case 'interact':
+        if (needPlay()) return fail(needPlay());
+        if (s.battle) return fail('Finish the battle first.');
+        if (DIRS[a.dir]) s.dir = a.dir;
+        interact(s, rng, ev);
+        break;
+      case 'battle':
+        if (!s.battle) return fail('No battle in progress.');
+        if (![0, 1, 2, 3].includes(a.move)) return fail('Bad move.');
+        battleAct(s, a.move, rng, ev);
+        break;
+      case 'accept': {
+        if (needPlay()) return fail(needPlay());
+        if (!jobById(a.job)) return fail('Unknown job.');
+        const st = C.js(s, a.job).status;
+        if (st === 'ready') return fail('Claim this job before taking it again.');
+        accept(s, a.job, ev);
+        break;
+      }
+      case 'berry':
+        if (s.battle) return fail('Use berries from the battle menu.');
+        if (!s.bag.berry) return fail('No berries left.');
+        if (s.hp >= C.maxHp(s.lvl)) return fail('HP is already full.');
+        s.bag.berry--;
+        s.hp = Math.min(C.maxHp(s.lvl), s.hp + Math.round(C.maxHp(s.lvl) * 0.4));
+        break;
+      case 'bind': {
+        const c = opts.verifiedCard;
+        if (!c) return fail('That card could not be verified.');
+        if (!c.eligible) return fail('Only cards from the original 151 can be bound.');
+        s.bound = { id: c.id, species: c.species, grade: c.grade, gradeNum: c.gradeNum, image: c.image || null };
+        ev.push({ k: 'toast', text: `Bound ${c.species}. Level cap is now ${C.levelCap(s)}.` });
+        break;
+      }
+      case 'unbind':
+        s.bound = null;
+        break;
+      default:
+        return fail('Unknown action.');
+    }
+    return { ok: true, events: ev };
+  };
+
+  // ---------- Payout helpers (used by the server) ----------
+  C.rollTier = function (weights, rng) {
+    const tot = weights.reduce((a, b) => a + b, 0);
+    let r = rng() * tot;
+    for (let i = 0; i < weights.length; i++) { if (r < weights[i]) return i; r -= weights[i]; }
+    return weights.length - 1;
+  };
+  C.claimable = (s, id) => !!jobById(id) && C.js(s, id).status === 'ready';
+  C.finishClaim = function (s, jobId, card, boost) {
+    s.cards.unshift(card);
+    s.stats.awarded++;
+    if (boost.burn) {
+      s.stats.burned += boost.burn * R.RULES.burnShare;
+      s.stats.toCards += boost.burn * (1 - R.RULES.burnShare);
+    }
+    Object.assign(C.js(s, jobId), { status: 'open', progress: 0, parcel: false });
+    if (s.active === jobId) s.active = null;
+    if (jobId === 'glimmer') s.cleared.cave = {};
+    if (jobId === 'thorn-den') s.bossDown = false;
+  };
+
+  if (typeof module !== 'undefined' && module.exports) module.exports = R;
+})();
+
+</script>
+  <script>
+// Route 151 — Pokémon sprites and original tile art. Requires core.js.
+(function () {
+  const R = window.R151;
+
+  const PAL = {
+    k: '#1c1a24', w: '#fff8e8', o: '#f08a3c', y: '#ffd35a', r: '#d8402a',
+    b: '#5aa8e8', p: '#2f6cb8', l: '#bfe6ff', c: '#7fd8ff', g: '#2f8a3e',
+    G: '#5cc456', t: '#e8c99a', n: '#e87a8a', v: '#8a5cc4', V: '#c4a0f0',
+    s: '#8a8a96', S: '#c8c8d2', d: '#3a3046', D: '#6a5a7a', e: '#ff4060',
+    m: '#6e2a20', M: '#b0583a', q: '#25c6bc', Q: '#168a9f', h: '#6a42a8', H: '#d8c8f0', f: '#f4a6b8', F: '#d66a8d',
+  };
+
+  const ART = {
+    embrit: [
+      '................',
+      '.....kk.........',
+      '....kook........',
+      '....kooyk.......',
+      '....koooook.....',
+      '....koooook.....',
+      '.....kookkk.....',
+      '.......krrk.....',
+      '......koyok.....',
+      '.....koyook.....',
+      '....koooook.....',
+      '....koowook.....',
+      '.....koook......',
+      '......kkk.......',
+      '.......k........',
+      '................',
+    ],
+    puddlit: [
+      '................',
+      '....kk......kk..',
+      '...kbck....kbck.',
+      '...kcbk....kcbk.',
+      '....kkkkkkkkk...',
+      '...kbbbbbbbbbk..',
+      '..kbbckbbbbbbbk.',
+      '..kbkwkbbbbbbbk.',
+      '..kbbkkbbbkkbbk.',
+      '..kbbbbnnnbbbbk.',
+      '...kbbbbbbbbbk..',
+      '....kbbbbbbbk...',
+      '.....kkkkkkk....',
+      '....k..kk..k....',
+      '....kk....kk....',
+      '................',
+    ],
+    burrbo: [
+      '................',
+      '.....gggg.......',
+      '....gGGGGg......',
+      '...gGGGGGGg.....',
+      '...gGkkkGGGg....',
+      '..gGktGkGGGGg...',
+      '..gGkGGgGGGGGg..',
+      '..kGGGGGGGGGGk..',
+      '..kGGGkGGGGGGk..',
+      '...kGGGGGGGGk...',
+      '....kGGGGGGk....',
+      '.....kGGGkk.....',
+      '......kk..kk....',
+      '.....kk....kk...',
+      '................',
+      '................',
+    ],
+    gnatling: [
+      '................',
+      '......k.........',
+      '.....kek........',
+      '......k.........',
+      '.......g........',
+      '......gGg.......',
+      '.....gGgGg......',
+      '....gGgGgGg.....',
+      '....kGgGgGk.....',
+      '....gGgGgGg.....',
+      '.....gGgGg......',
+      '......yyyy......',
+      '.......kk.......',
+      '......k..k......',
+      '................',
+      '................',
+    ],
+    pebbit: [
+      '................',
+      '...kk......kk...',
+      '..kSSk....kSSk..',
+      '.kSSSSkkkkSSSSk.',
+      'kSSSSSSSSSSSSSSk',
+      'kSSSSSSwwSSSSSSk',
+      'kSSSSSSkkSSSSSSk',
+      '.kSSSSSSSSSSSSk.',
+      '..kSSSSSSSSSSk..',
+      '....kSSSSSSk....',
+      '....kSSSSSSSSk..',
+      '...kSSSSSSSSSSk.',
+      '...kSSSSSSSSSSk.',
+      '....kkkkkkkkkk..',
+      '..kk........kk..',
+      '................',
+    ],
+    gloomote: [
+      '................',
+      '......kk........',
+      '...kkkkkkkk.....',
+      '..kddddddddk....',
+      '.kddddddddddk...',
+      'kddddddddddddk..',
+      'kddddkddkdddddk.',
+      'kddddkwwkdddddk.',
+      'kddddkkkkdddddk.',
+      'kdddddddddddddk.',
+      'kdddddddddddddkk',
+      'kdddddddddddddk.',
+      '.kdddddddddddk..',
+      '..kkdddddddk....',
+      '....kkkkkk......',
+      '................',
+    ],
+    thornox: [
+      '................',
+      '......fff.......',
+      '.....fffff......',
+      '......fFf.......',
+      '....gggGggg.....',
+      '...gGGGGGGGg....',
+      '..gGGGGGGGGGg...',
+      '..gGGkkkkkGGg...',
+      '.gGGGkwwkGGGGg..',
+      '.gGGGkkkkkGGGg..',
+      '..gGGGGGGGGGGg..',
+      '...gGGGGGGGGg...',
+      '....ggGGGGGg....',
+      '....kkGGGkk.....',
+      '...kk.....kk....',
+      '................',
+    ],
+  };
+
+  const REF_ART = {"burrbo":{"colors":["#000000","#00fe00","#000002","#000e0b","#ffffff","#27feb0","#58d3ee","#31e871","#2bfaa8","#88d3f9","#280606"],"rows":["................",".........000....","........01123...","....4443310134..","..3001131010110.","..35010110113110","..35502131113110",".055666331117110","0065555580110060","0065565656203660","05556503566696.0","065550a.8262900.",".436699966663...","...000000.6.3...",".........000....","................"]},"embrit":{"colors":["#000000","#e9942d","#fe7914","#080605","#8a0604","#fca643","#f47b21","#e4ba31","#000100","#000002","#ffffff"],"rows":["...000.......0..","..01123.....04..","..155550....043.",".0155556...04440","0115.556...04440","015505223..34743",".355522220..06..","..022222228866..","...00623220669..","....877362663a..","....87772260....","...0a777226.....","....3377218.....",".......06a0.....","........000.....","................"]},"puddlit":{"colors":["#000000","#1bbdbb","#2773bf","#000207","#868c93","#7a6a62","#000002","#060100","#2081c0","#75d98d"],"rows":["................","..000...........","..11230.....33..",".311110200.11120","0111112245011220","011.012244622020",".3205222.44230..","..0222031.57....","..1070118.57....","....79335455....","...52999959.....","....5559159.....",".......5225.....","........55......","................","................"]}};
+  const sCache = {};
+  R.sprite = function (id) {
+    if (sCache[id]) return sCache[id];
+    const c = document.createElement('canvas');
+    c.width = c.height = 16;
+    const g = c.getContext('2d');
+    const ref = REF_ART[id];
+    (ref ? ref.rows : (ART[id] || ART.embrit)).forEach((row, y) => {
+      const r = row.padEnd(16, '.').slice(0, 16);
+      for (let x = 0; x < 16; x++) {
+        const col = ref ? ref.colors['0123456789ab'.indexOf(r[x])] : PAL[r[x]];
+        if (col) { g.fillStyle = col; g.fillRect(x, y, 1, 1); }
+      }
+    });
+    sCache[id] = c;
+    return c;
+  };
+  const uCache = {};
+  R.spriteURL = id => uCache[id] || (uCache[id] = R.sprite(id).toDataURL());
+
+  // ---------- Tiles ----------
+  const T = R.T; // tile ids come from core.js
+
+  const tCache = {};
+  R.tileImg = function (t, f) {
+    const k = t + '_' + (f & 1);
+    if (tCache[k]) return tCache[k];
+    const c = document.createElement('canvas');
+    c.width = c.height = 16;
+    drawTile(c.getContext('2d'), t, f & 1);
+    tCache[k] = c;
+    return c;
+  };
+
+  function drawTile(g, t, f) {
+    const P = (col, x, y, w = 1, h = 1) => { g.fillStyle = col; g.fillRect(x, y, w, h); };
+    const grass = () => {
+      P('#78c850', 0, 0, 16, 16);
+      for (const [x, y] of [[3, 4], [11, 2], [7, 10], [13, 12], [2, 13], [9, 6]]) P('#5aa83f', x, y, 1, 2);
+    };
+    const path = () => {
+      P('#e2cc96', 0, 0, 16, 16);
+      for (const [x, y] of [[2, 2], [9, 4], [5, 9], [13, 11], [11, 1], [3, 13]]) P('#c9b07a', x, y);
+      for (const [x, y] of [[7, 7], [14, 6]]) P('#f2e0b0', x, y);
+    };
+    const water = () => {
+      P('#3f8fd8', 0, 0, 16, 16);
+      const o = f ? 2 : 0;
+      P('#8cc8f8', 1 + o, 4, 4, 1); P('#8cc8f8', 9 + o, 4, 3, 1);
+      P('#8cc8f8', 5 - o, 11, 4, 1); P('#8cc8f8', 12 - o, 11, 3, 1);
+      P('#2f78c0', 0, 15, 16, 1);
+    };
+    const wall = () => { P('#efe3c6', 0, 0, 16, 16); P('#d8c8a2', 0, 7, 16, 1); P('#c9b48a', 0, 15, 16, 1); };
+    const cavef = () => {
+      P('#5e4e46', 0, 0, 16, 16);
+      for (const [x, y] of [[2, 3], [9, 1], [13, 7], [5, 10], [11, 13], [1, 14]]) P('#4a3c36', x, y);
+      for (const [x, y] of [[7, 5], [14, 12], [3, 7]]) P('#75645a', x, y);
+    };
+    const rock = () => {
+      P('#6e625a', 0, 0, 16, 16);
+      P('#4e443e', 0, 7, 16, 1); P('#4e443e', 7, 0, 1, 7); P('#4e443e', 3, 8, 1, 8); P('#4e443e', 11, 8, 1, 8);
+      P('#8e8278', 1, 1, 5, 1); P('#8e8278', 9, 1, 5, 1); P('#8e8278', 5, 9, 5, 1);
+      P('#3a322e', 0, 15, 16, 1);
+    };
+    const denf = () => {
+      P('#3a2a32', 0, 0, 16, 16);
+      for (const [x, y] of [[3, 2], [12, 5], [6, 11], [10, 14]]) P('#2a1e24', x, y);
+      for (const [x, y] of [[8, 7], [1, 10], [14, 1]]) P('#4e3a44', x, y);
+    };
+    const roof = (a, b, c) => {
+      P(a, 0, 0, 16, 16);
+      for (const y of [3, 7, 11, 15]) P(b, 0, y, 16, 1);
+      for (const [x, y] of [[2, 1], [10, 5], [5, 9], [13, 13]]) P(c, x, y, 3, 1);
+    };
+
+    switch (t) {
+      case T.GRASS: grass(); break;
+      case T.TALL: {
+        P('#4a9a3c', 0, 0, 16, 16);
+        const o = f ? 1 : 0;
+        for (const [x, y] of [[1, 3], [6, 1], [11, 4], [3, 9], [9, 8], [12, 11], [1, 13], [7, 12]]) {
+          P('#2d7a2a', x, y + 1, 1, 3); P('#2d7a2a', x + 2, y + 1, 1, 3); P('#9ee070', x + 1 - o, y, 1, 3);
+        }
+        break;
+      }
+      case T.PATH: path(); break;
+      case T.WATER: water(); break;
+      case T.TREE:
+        grass();
+        P('#6e4426', 6, 11, 4, 5);
+        P('#2e7a32', 2, 2, 12, 9); P('#2e7a32', 3, 1, 10, 11);
+        P('#1d5424', 3, 11, 10, 1); P('#1d5424', 2, 9, 1, 2); P('#1d5424', 13, 9, 1, 2);
+        P('#4ea84a', 4, 3, 5, 3); P('#7cd06a', 5, 3, 2, 1);
+        break;
+      case T.WALL: wall(); break;
+      case T.WINDOW:
+        wall();
+        P('#5a4a3a', 4, 3, 8, 8); P('#8fd0f4', 5, 4, 6, 6);
+        P('#5a4a3a', 7, 4, 1, 6); P('#5a4a3a', 5, 6, 6, 1); P('#d8f2ff', 5, 4, 2, 1);
+        break;
+      case T.ROOF: roof('#c84a3a', '#9a3428', '#e06a52'); break;
+      case T.ROOFB: roof('#3a6ac8', '#284a9a', '#5a8ae0'); break;
+      case T.DOOR:
+        wall();
+        P('#5a3a22', 3, 2, 10, 14); P('#8a5a34', 4, 3, 8, 13); P('#ffd35a', 10, 9, 1, 1);
+        break;
+      case T.CAVEF: cavef(); break;
+      case T.ROCK: rock(); break;
+      case T.CAVE:
+        rock();
+        P('#120e14', 4, 5, 8, 11); P('#120e14', 5, 4, 6, 1);
+        P('#2a2026', 3, 6, 1, 10); P('#2a2026', 12, 6, 1, 10);
+        break;
+      case T.SAND:
+        P('#f0dca0', 0, 0, 16, 16);
+        for (const [x, y] of [[2, 3], [10, 2], [6, 9], [13, 12], [4, 14]]) P('#d8c080', x, y);
+        for (const [x, y] of [[8, 6], [14, 8]]) P('#fff0c8', x, y);
+        break;
+      case T.FLOWER: {
+        grass();
+        const cs = f ? ['#ff6a7a', '#ffd35a'] : ['#ffd35a', '#ff6a7a'];
+        [[3, 3], [10, 5], [6, 11], [12, 12]].forEach(([x, y], i) => {
+          const c = cs[i % 2];
+          P(c, x - 1, y); P(c, x + 1, y); P(c, x, y - 1); P(c, x, y + 1); P('#fff', x, y);
+        });
+        break;
+      }
+      case T.SIGN:
+        grass();
+        P('#6e4426', 7, 9, 2, 7);
+        P('#5a3a22', 1, 1, 14, 9); P('#c8a064', 2, 2, 12, 7);
+        P('#8a6a3a', 4, 4, 6, 1); P('#8a6a3a', 4, 6, 5, 1); P('#f2b632', 11, 3, 2, 2);
+        break;
+      case T.DEN:
+        grass();
+        P('#3a1a2a', 2, 4, 12, 12); P('#1a0a12', 4, 6, 8, 10);
+        for (const [x, y] of [[2, 3], [5, 2], [9, 2], [12, 3], [14, 5], [1, 6]]) P('#8c3a4a', x, y, 1, 2);
+        break;
+      case T.FENCE:
+        grass();
+        P('#fff8e8', 0, 6, 16, 2); P('#fff8e8', 0, 11, 16, 2);
+        P('#fff8e8', 2, 4, 2, 11); P('#fff8e8', 10, 4, 2, 11);
+        P('#b0a890', 0, 8, 16, 1); P('#b0a890', 0, 13, 16, 1);
+        break;
+      case T.BRIDGE:
+        water();
+        P('#b07a46', 0, 2, 16, 12);
+        for (const x of [0, 4, 8, 12]) P('#7a4a2a', x, 2, 1, 12);
+        P('#7a4a2a', 0, 2, 16, 1); P('#7a4a2a', 0, 13, 16, 1);
+        break;
+      case T.STALL:
+        path();
+        P('#7a4a2a', 1, 8, 14, 7); P('#a06a3a', 2, 9, 12, 2);
+        for (let i = 0; i < 4; i++) P(i % 2 ? '#fff8e8' : '#d8402a', i * 4, 1, 4, 6);
+        P('#ffd35a', 3, 9, 2, 2); P('#5cc456', 7, 9, 2, 2); P('#d8402a', 11, 9, 2, 2);
+        break;
+      case T.WELL:
+        path();
+        P('#6e6a74', 2, 4, 12, 10); P('#8e8a96', 3, 4, 10, 2);
+        P('#3f8fd8', 4, 6, 8, 6); P('#8cc8f8', 5 + (f ? 2 : 0), 7, 3, 1); P('#4a464e', 2, 13, 12, 1);
+        break;
+      case T.EXIT:
+        cavef();
+        P('#f8e8b0', 4, 0, 8, 16); P('#fff6d8', 6, 0, 4, 16);
+        break;
+      case T.ORE:
+        rock();
+        P('#7fe0ff', 4, 6, 2, 6); P('#c8f6ff', 5, 6, 1, 3);
+        P('#7fe0ff', 9, 4, 3, 8); P('#c8f6ff', 10, 4, 1, 4); P('#4ab0d8', 12, 8, 2, 4);
+        if (f) P('#ffffff', 10, 5, 1, 1);
+        break;
+      case T.DENF: case T.BOSS: denf(); break;
+      case T.THORN:
+        P('#2a1a22', 0, 0, 16, 16);
+        for (const [x, y] of [[2, 2], [8, 1], [12, 5], [4, 9], [10, 10], [6, 13]]) {
+          P('#8c3a4a', x, y, 1, 3); P('#8c3a4a', x - 1, y + 1, 3, 1); P('#c86a7a', x, y, 1, 1);
+        }
+        break;
+      case T.MAIL:
+        path();
+        P('#5a3a22', 7, 10, 2, 6); P('#d8402a', 4, 2, 8, 9); P('#a02a1a', 4, 10, 8, 1);
+        P('#1c1a24', 6, 5, 4, 1); P('#ffd35a', 10, 3, 1, 2);
+        break;
+      default: grass();
+    }
+  }
+
+  // Minimap colors
+  R.TILE_COLOR = {
+    [T.GRASS]: '#78c850', [T.TALL]: '#3f8a34', [T.PATH]: '#e2cc96', [T.WATER]: '#3f8fd8',
+    [T.TREE]: '#25642a', [T.WALL]: '#efe3c6', [T.ROOF]: '#c84a3a', [T.ROOFB]: '#3a6ac8',
+    [T.DOOR]: '#8a5a34', [T.CAVEF]: '#7a6a60', [T.ROCK]: '#4e443e', [T.CAVE]: '#120e14',
+    [T.SAND]: '#f0dca0', [T.FLOWER]: '#ff8a9a', [T.SIGN]: '#f2b632', [T.DEN]: '#1a0a12',
+    [T.FENCE]: '#fff8e8', [T.BRIDGE]: '#b07a46', [T.STALL]: '#d8402a', [T.WELL]: '#8cc8f8',
+    [T.EXIT]: '#f8e8b0', [T.ORE]: '#7fe0ff', [T.DENF]: '#5a4450', [T.THORN]: '#2a1a22',
+    [T.BOSS]: '#ff4060', [T.MAIL]: '#d8402a', [T.WINDOW]: '#8fd0f4',
+  };
+})();
+
+</script>
+  <script>
+// Route 151 — original pixel logo (island + wordmark) and small scene renders for the site.
+(function () {
+  const R = window.R151, T = R.T;
+
+  const GLYPH = {
+    R: ['11110', '10001', '10001', '11110', '10100', '10010', '10001'],
+    O: ['01110', '10001', '10001', '10001', '10001', '10001', '01110'],
+    U: ['10001', '10001', '10001', '10001', '10001', '10001', '01110'],
+    T: ['11111', '00100', '00100', '00100', '00100', '00100', '00100'],
+    E: ['11111', '10000', '10000', '11110', '10000', '10000', '11111'],
+    1: ['00100', '01100', '00100', '00100', '00100', '00100', '01110'],
+    5: ['11111', '10000', '11110', '00001', '00001', '10001', '01110'],
+  };
+
+  // A bold pixel-font mask: each glyph pixel is a scale×scale block, widened by one column.
+  function textMask(str, scale) {
+    const gw = 6, gap = 1;
+    const cols = str.length * (gw + gap) - gap;
+    const w = cols * scale, h = 7 * scale;
+    const m = new Uint8Array(w * h);
+    [...str].forEach((ch, i) => {
+      GLYPH[ch].forEach((row, y) => {
+        for (let x = 0; x < 5; x++) {
+          if (row[x] !== '1') continue;
+          for (let b = 0; b < 2; b++) {
+            const cx = (i * (gw + gap) + x + b) * scale;
+            for (let yy = 0; yy < scale; yy++) for (let xx = 0; xx < scale; xx++) m[(y * scale + yy) * w + cx + xx] = 1;
+          }
+        }
+      });
+    });
+    return { w, h, m };
+  }
+
+  function dilate(mask, d) {
+    const W = mask.w + d * 2, H = mask.h + d * 2, out = new Uint8Array(W * H);
+    for (let y = 0; y < mask.h; y++) for (let x = 0; x < mask.w; x++) {
+      if (!mask.m[y * mask.w + x]) continue;
+      for (let dy = -d; dy <= d; dy++) for (let dx = -d; dx <= d; dx++) out[(y + d + dy) * W + x + d + dx] = 1;
+    }
+    return { w: W, h: H, m: out, d };
+  }
+
+  function paintMask(g, mask, ox, oy, color) {
+    for (let y = 0; y < mask.h; y++) for (let x = 0; x < mask.w; x++) {
+      if (!mask.m[y * mask.w + x]) continue;
+      g.fillStyle = typeof color === 'function' ? color(x, y, mask) : color;
+      g.fillRect(ox + x, oy + y, 1, 1);
+    }
+  }
+
+  // Outlined, shaded wordmark.
+  function word(g, str, scale, ox, oy, fill, ink, rim) {
+    const m = textMask(str, scale);
+    if (rim) { const r = dilate(m, 3); paintMask(g, r, ox - 3, oy - 3 + 2, 'rgba(0,0,0,.45)'); paintMask(g, r, ox - 3, oy - 3, rim); }
+    paintMask(g, dilate(m, 2), ox - 2, oy - 2, ink);
+    paintMask(g, m, ox, oy, (x, y, mk) => {
+      const t = y / mk.h;
+      return t < 0.3 ? fill[0] : t < 0.78 ? fill[1] : fill[2];
+    });
+    return m;
+  }
+
+  function blob(g, cx, cy, rx, ry, wobble, color, seed) {
+    for (let y = Math.floor(cy - ry - 3); y <= cy + ry + 3; y++) {
+      for (let x = Math.floor(cx - rx - 3); x <= cx + rx + 3; x++) {
+        const a = Math.atan2(y - cy, x - cx);
+        const k = 1 + wobble * Math.sin(a * 5 + seed) + wobble * 0.6 * Math.sin(a * 9 + seed * 2);
+        const v = ((x - cx) / (rx * k)) ** 2 + ((y - cy) / (ry * k)) ** 2;
+        if (v <= 1) { g.fillStyle = typeof color === 'function' ? color(x, y, v) : color; g.fillRect(x, y, 1, 1); }
+      }
+    }
+  }
+
+  function tree(g, x, y, s) {
+    s = s || 1;
+    const P = (c, a, b, w, h) => { g.fillStyle = c; g.fillRect(x + a * s, y + b * s, w * s, h * s); };
+    P('#5a3a22', 4, 9, 3, 4);
+    P('#14451d', 1, 2, 9, 8); P('#14451d', 2, 1, 7, 10); P('#14451d', 3, 0, 5, 1);
+    P('#2e7a32', 2, 2, 7, 7); P('#2e7a32', 3, 1, 5, 9);
+    P('#4ea84a', 3, 2, 4, 3); P('#86d66c', 4, 2, 2, 1);
+  }
+
+  function flower(g, x, y, c) {
+    g.fillStyle = '#2f8a3e'; g.fillRect(x, y + 2, 1, 3); g.fillRect(x - 1, y + 4, 1, 1);
+    g.fillStyle = c; g.fillRect(x - 1, y, 3, 1); g.fillRect(x, y - 1, 1, 3);
+    g.fillStyle = '#fff6c8'; g.fillRect(x, y, 1, 1);
+  }
+
+  // Logical size 160×150; scale up with CSS (image-rendering: pixelated).
+  R.drawLogo = function (canvas) {
+    canvas.width = 160; canvas.height = 160;
+    const g = canvas.getContext('2d');
+    g.imageSmoothingEnabled = false;
+
+    // Open sea with wave glints
+    for (let y = 0; y < 160; y++) {
+      g.fillStyle = y < 10 ? '#7fd0ff' : y < 40 ? '#3fa2f5' : '#2a86ea';
+      g.fillRect(0, y, 160, 1);
+    }
+    g.fillStyle = '#bfe8ff';
+    for (let i = 0; i < 46; i++) {
+      const x = (i * 37 + (i % 5) * 11) % 156, y = 12 + ((i * 53) % 146);
+      g.fillRect(x, y, 3 + (i % 3), 1);
+    }
+    // Clouds on the horizon
+    g.fillStyle = '#ffffff';
+    for (const [x, y, w] of [[6, 2, 16], [104, 1, 22], [132, 5, 14]]) { g.fillRect(x, y + 2, w, 3); g.fillRect(x + 3, y, w - 6, 2); }
+
+    // Rocks with foam
+    const rock = (x, y, r) => {
+      blob(g, x, y + 1, r + 2, r * 0.7 + 2, 0.1, '#e6f6ff', x);
+      blob(g, x, y, r, r * 0.8, 0.12, (px, py, v) => (py < y - r * 0.2 ? '#b8bcc6' : v > 0.7 ? '#5a5f6c' : '#868b98'), x * 0.7);
+    };
+    rock(150, 22, 6); rock(146, 124, 7); rock(12, 150, 6); rock(150, 152, 5); rock(132, 10, 4);
+
+    g.translate(0, 4);
+
+    // Cliff band under the island, sand on the east shore
+    blob(g, 80, 64, 75, 52, 0.05, '#7a4a2a', 1.3);
+    blob(g, 80, 62, 75, 51, 0.05, '#a06a3e', 1.3);
+    blob(g, 128, 64, 26, 40, 0.08, '#f2dc9e', 0.4);
+
+    // Island
+    blob(g, 80, 60, 74, 50, 0.05, '#7a4a2a', 1.3);
+    blob(g, 80, 57, 72, 48, 0.05, (x, y, v) => v > 0.86 ? '#2f8a3e' : ((x * 7 + y * 13) % 23 === 0 ? '#4ea84a' : '#62c454'), 1.3);
+
+    // Mountain with a cave
+    for (let row = 0; row < 36; row++) {
+      const half = Math.round(row * 0.78) + 2;
+      for (let dx = -half; dx <= half; dx++) {
+        g.fillStyle = dx > half * 0.25 ? '#7a563e' : row < 6 ? '#d8c2a0' : '#a8805e';
+        g.fillRect(40 + dx, 14 + row, 1, 1);
+      }
+    }
+    g.fillStyle = '#5a3e2c'; for (const [x, y] of [[34, 30], [46, 26], [30, 40], [50, 38]]) g.fillRect(x, y, 3, 1);
+    g.fillStyle = '#120e14'; g.fillRect(35, 38, 10, 12); g.fillRect(36, 36, 8, 2); g.fillRect(37, 35, 6, 1);
+
+    // Pond with rocks and a dock
+    blob(g, 129, 44, 20, 17, 0.08, (x, y) => ((x + y * 3) % 11 === 0 ? '#8cc8f8' : '#3f8fd8'), 2.1);
+    g.fillStyle = '#7a7e8a'; g.fillRect(132, 38, 6, 4); g.fillRect(122, 50, 5, 3);
+    g.fillStyle = '#b8bcc6'; g.fillRect(133, 38, 3, 1); g.fillRect(123, 50, 2, 1);
+    g.fillStyle = '#b07a46'; g.fillRect(104, 46, 11, 4);
+    g.fillStyle = '#7a4a2a'; for (let i = 0; i < 4; i++) g.fillRect(105 + i * 3, 46, 1, 4);
+
+    // Path and tall grass
+    g.fillStyle = '#e2cc96'; g.fillRect(77, 38, 8, 26); g.fillRect(73, 58, 16, 8);
+    g.fillStyle = '#c9b07a'; g.fillRect(79, 44, 1, 1); g.fillRect(83, 52, 1, 1);
+    for (const [x, y] of [[56, 42], [64, 42], [56, 51], [92, 44], [100, 53], [92, 53]]) g.drawImage(R.tileImg(T.TALL, 0), x, y, 9, 9);
+
+    // House and a sign
+    for (let i = 0; i < 3; i++) g.drawImage(R.tileImg(T.ROOF, 0), 66 + i * 10, 15, 10, 10);
+    g.drawImage(R.tileImg(T.WINDOW, 0), 66, 25, 10, 10);
+    g.drawImage(R.tileImg(T.DOOR, 0), 76, 25, 10, 10);
+    g.drawImage(R.tileImg(T.WINDOW, 0), 86, 25, 10, 10);
+    g.drawImage(R.tileImg(T.SIGN, 0), 92, 36, 9, 9);
+
+    // Trees around the rim
+    for (const [x, y] of [[12, 30], [6, 46], [20, 52], [58, 8], [98, 10], [108, 20], [112, 6], [146, 56], [138, 64], [124, 66], [62, 26], [50, 54]]) tree(g, x, y, 1);
+
+    // Wordmark
+    word(g, 'ROUTE', 4, 13, 68, ['#ffe680', '#ffc61a', '#f0950f'], '#1b2f78', '#ffffff');
+
+    // Stone plaque with posts and the number
+    g.fillStyle = '#4a4f5c'; g.fillRect(28, 104, 6, 34); g.fillRect(126, 104, 6, 34);
+    g.fillStyle = '#9aa0ae'; g.fillRect(29, 105, 4, 32); g.fillRect(127, 105, 4, 32);
+    g.fillStyle = '#2a2d36'; g.fillRect(33, 102, 94, 38);
+    g.fillStyle = '#d6dae2'; g.fillRect(34, 103, 92, 36);
+    g.fillStyle = '#eef0f4'; g.fillRect(34, 103, 92, 3);
+    g.fillStyle = '#aeb3be'; g.fillRect(34, 135, 92, 4);
+    g.fillStyle = '#6a7080'; for (const [x, y] of [[37, 106], [121, 106], [37, 133], [121, 133]]) g.fillRect(x, y, 2, 2);
+    word(g, '151', 4, 40, 108, ['#ff7a66', '#e5302a', '#b01c1c'], '#3a0d12', null);
+
+    flower(g, 14, 128, '#ff6a7a'); flower(g, 20, 134, '#ffd35a'); flower(g, 142, 130, '#ff6a7a');
+    tree(g, 6, 112, 1);
+
+    // Waterfall off the west cliff
+    for (let y = 40; y < 104; y++) {
+      for (let x = 4; x < 11; x++) {
+        g.fillStyle = (x + y) % 5 === 0 ? '#ffffff' : (x + y) % 3 === 0 ? '#9fdcff' : '#4fb0f5';
+        g.fillRect(x, y, 1, 1);
+      }
+    }
+    g.fillStyle = '#e6f6ff'; g.fillRect(1, 102, 14, 3); g.fillRect(3, 100, 10, 2);
+
+    // Bridge out to a sea stack on the east
+    g.fillStyle = '#5a3a22'; g.fillRect(138, 52, 22, 9);
+    g.fillStyle = '#c08a52'; g.fillRect(138, 53, 22, 7);
+    g.fillStyle = '#7a4a2a'; for (let i = 0; i < 6; i++) g.fillRect(139 + i * 4, 53, 1, 7);
+    g.fillStyle = '#5a3a22'; g.fillRect(139, 49, 2, 4); g.fillRect(157, 49, 2, 4); g.fillRect(139, 60, 2, 4); g.fillRect(157, 60, 2, 4);
+    g.setTransform(1, 0, 0, 1, 0, 0);
+  };
+
+  // Draw part of a map into a canvas at native tile size.
+  R.drawScene = function (canvas, mapId, tx, ty, w, h, sprites, frame) {
+    canvas.width = w * 16; canvas.height = h * 16;
+    const g = canvas.getContext('2d');
+    g.imageSmoothingEnabled = false;
+    const m = R.maps[mapId];
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) g.drawImage(R.tileImg(R.getTile(m, tx + x, ty + y), frame || 0), x * 16, y * 16);
+    for (const s of sprites || []) {
+      g.fillStyle = 'rgba(0,0,0,.25)'; g.fillRect((s.x - tx) * 16 + 3, (s.y - ty) * 16 + 13, 10, 2);
+      const size = s.size || 16, off = (size - 16) / 2;
+      g.drawImage(R.sprite(s.id), (s.x - tx) * 16 - off, (s.y - ty) * 16 - off - 2, size, size);
+    }
+  };
+})();
+
+</script>
+  <script>
+// Route 151 — transport between the client and the game engine.
+// With a server, every action goes to it; the server runs the same engine and returns the
+// authoritative state, and the browser only predicts and renders. Without one, the world runs
+// offline in the browser and claims are unavailable, because only the server can settle cards.
+(function () {
+  const R = window.R151, cfg = R.config, C = R.Core;
+  const LKEY = 'r151.save.v2', TKEY = 'r151.session.v2';
+  const OFFLINE = 'Claims are settled by the Route 151 server. Open the game from the Route 151 site to claim.';
+  const store = {
+    get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+    set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} },
+  };
+
+  const N = R.net = {
+    mode: cfg.apiBase ? 'remote' : 'local',
+    token: null, linked: null, global: null, serverVault: [], liveBurns: false,
+  };
+
+  function saveLocal() { if (N.mode === 'local') store.set(LKEY, JSON.stringify(R.state)); }
+  N.save = saveLocal;
+
+  function absorb(r) {
+    if (!r) return;
+    if (r.state) R.state = r.state;
+    if ('wallet' in r) N.linked = r.wallet;
+    if (r.global) N.global = r.global;
+    if (r.vault) N.serverVault = r.vault;
+    if ('liveBurns' in r) N.liveBurns = !!r.liveBurns;
+  }
+
+  async function api(path, body, method) {
+    method = method || 'POST';
+    const headers = { 'Content-Type': 'application/json' };
+    if (N.token) headers.Authorization = 'Bearer ' + N.token;
+    const res = await fetch(cfg.apiBase + path, { method, headers, body: method === 'GET' ? undefined : JSON.stringify(body || {}) });
+    let j = {};
+    try { j = await res.json(); } catch (e) {}
+    if (!res.ok) {
+      absorb(j);
+      throw new Error(j.error || `The game server returned ${res.status}.`);
+    }
+    absorb(j);
+    return j;
+  }
+
+  N.init = async function () {
+    if (N.mode === 'local') {
+      let s = null;
+      try { s = JSON.parse(store.get(LKEY)); } catch (e) {}
+      R.state = s && s.v === 2 ? Object.assign(C.newState(), s) : C.newState();
+      return;
+    }
+    const r = await api('/session', { token: store.get(TKEY) });
+    N.token = r.token;
+    store.set(TKEY, r.token);
+  };
+
+  N.send = async function (action) {
+    if (N.mode === 'local') {
+      const res = C.apply(R.state, action, Math.random, {});
+      saveLocal();
+      if (!res.ok) throw new Error(res.error);
+      return res.events;
+    }
+    const r = await api('/action', { action });
+    return r.events || [];
+  };
+
+  N.vaultList = function () {
+    if (N.mode === 'remote') return N.serverVault;
+    const own = R.wallet.pubkey ? R.wallet.vault : [];
+    return own;
+  };
+
+  N.refreshVault = async function () {
+    if (N.mode === 'remote' && N.linked) await api('/vault', null, 'GET');
+  };
+
+  N.bind = async function (cardId) {
+    if (N.mode === 'remote') { const r = await api('/bind', { cardId }); return r.events || []; }
+    const card = N.vaultList().find(c => c.id === cardId);
+    const res = C.apply(R.state, { type: 'bind' }, Math.random, { verifiedCard: card });
+    saveLocal();
+    if (!res.ok) throw new Error(res.error);
+    return res.events;
+  };
+
+  N.balance = () => (R.wallet.pubkey ? (R.wallet.boost || 0) : 0);
+
+  N.claim = async function (jobId, bi, burnSig) {
+    const boost = R.BOOSTS[bi];
+    if (N.mode === 'remote') {
+      const r = await api('/claim', { jobId, boost: boost.id, burnSig: burnSig || null });
+      return r.card;
+    }
+    throw new Error(OFFLINE);
+  };
+
+  N.resell = async function (uid) {
+    if (N.mode === 'remote') { await api(`/cards/${encodeURIComponent(uid)}/resell`); return 'Listed on the market.'; }
+    throw new Error(OFFLINE);
+  };
+
+  N.redeem = async function (uid) {
+    if (N.mode === 'remote') { await api(`/cards/${encodeURIComponent(uid)}/redeem`); return 'Redemption requested. The slab ships from the vault.'; }
+    throw new Error(OFFLINE);
+  };
+
+  // Sign-in with Solana: proves wallet ownership to the server with a free message signature.
+  N.linkWallet = async function () {
+    if (N.mode !== 'remote') return;
+    const { message } = await api('/auth/nonce');
+    const sig = await R.wallet.signMessage(message);
+    let bin = '';
+    sig.forEach(b => { bin += String.fromCharCode(b); });
+    await api('/auth/verify', { pubkey: R.wallet.pubkey.toBase58(), signature: btoa(bin), message, acceptedTerms: true });
+    await N.refreshVault();
+  };
+})();
+
+</script>
+  <script>
+// Route 151 — Solana wallet connect using @solana/web3.js (loaded as the global `solanaWeb3`).
+(function () {
+  const R = window.R151, cfg = R.config;
+
+  const TOKEN_PROGRAM = 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA';
+  const ATA_PROGRAM = 'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNvhJ8tTJL';
+  const MEMO_PROGRAM = 'MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr';
+
+  const W = R.wallet = { provider: null, pubkey: null, name: null, sol: null, boost: null, vault: [], loading: false };
+
+  const web3 = () => {
+    if (typeof window.solanaWeb3 === 'undefined') throw new Error('Solana SDK did not load. Check your connection and reload.');
+    return window.solanaWeb3;
+  };
+  let _conn = null;
+  W.conn = () => (_conn = _conn || new (web3().Connection)(cfg.rpcUrl, 'confirmed'));
+
+  // Real burns need a configured mint + treasury, a game server to verify them, and this wallet
+  // linked to the player's server session.
+  W.live = () => !!(W.pubkey && cfg.boosterMint && cfg.treasuryWallet && R.net.mode === 'remote' &&
+    R.net.liveBurns && R.net.linked === W.pubkey.toBase58());
+
+  W.signMessage = async function (text) {
+    if (!W.provider || !W.provider.signMessage) throw new Error(`${W.name || 'This wallet'} cannot sign messages.`);
+    const r = await W.provider.signMessage(new TextEncoder().encode(text), 'utf8');
+    return r && r.signature ? r.signature : r;
+  };
+
+  W.detect = function () {
+    const list = [];
+    const ph = window.phantom && window.phantom.solana;
+    if (ph && ph.isPhantom) list.push({ name: 'Phantom', p: ph });
+    if (window.solflare && window.solflare.isSolflare) list.push({ name: 'Solflare', p: window.solflare });
+    if (window.backpack && (window.backpack.solana || window.backpack.connect)) list.push({ name: 'Backpack', p: window.backpack.solana || window.backpack });
+    if (!list.length && window.solana && window.solana.connect) list.push({ name: 'Solana wallet', p: window.solana });
+    return list;
+  };
+
+  W.connect = async function (entry, opts) {
+    const { PublicKey } = web3();
+    const res = await entry.p.connect(opts);
+    const pk = (res && res.publicKey) || entry.p.publicKey;
+    if (!pk) throw new Error(`${entry.name} did not return an address.`);
+    W.provider = entry.p;
+    W.name = entry.name;
+    W.pubkey = new PublicKey(pk.toString());
+    try { localStorage.setItem('r151.wallet', entry.name); } catch (e) {}
+    if (entry.p.on && !entry.p._r151) {
+      entry.p._r151 = true;
+      entry.p.on('accountChanged', async next => {
+        if (!next) return W.disconnect();
+        W.pubkey = new PublicKey(next.toString());
+        await W.refresh();
+        R.ui.onWallet();
+      });
+      entry.p.on('disconnect', () => { if (W.pubkey) W.disconnect(); });
+    }
+    R.ui.onWallet();
+    await W.refresh();
+    R.ui.onWallet();
+  };
+
+  W.disconnect = async function () {
+    const p = W.provider;
+    Object.assign(W, { provider: null, pubkey: null, name: null, sol: null, boost: null, vault: [] });
+    try { localStorage.removeItem('r151.wallet'); } catch (e) {}
+    try { p && p.disconnect && (await p.disconnect()); } catch (e) {}
+    R.game.checkBound();
+    R.ui.onWallet();
+  };
+
+  W.tryAutoConnect = async function () {
+    let last = null;
+    try { last = localStorage.getItem('r151.wallet'); } catch (e) {}
+    if (!last) return;
+    const entry = W.detect().find(e => e.name === last);
+    if (!entry) return;
+    try { await W.connect(entry, { onlyIfTrusted: true }); } catch (e) { /* user must click connect */ }
+  };
+
+  W.refresh = async function () {
+    if (!W.pubkey) return;
+    const { PublicKey, LAMPORTS_PER_SOL } = web3();
+    W.loading = true;
+    try {
+      W.sol = (await W.conn().getBalance(W.pubkey)) / LAMPORTS_PER_SOL;
+    } catch (e) { console.warn('SOL balance failed', e); }
+    if (cfg.boosterMint) {
+      try {
+        const res = await W.conn().getParsedTokenAccountsByOwner(W.pubkey, { mint: new PublicKey(cfg.boosterMint) });
+        W.boost = res.value.reduce((sum, a) => sum + (a.account.data.parsed.info.tokenAmount.uiAmount || 0), 0);
+      } catch (e) { console.warn('BOOST balance failed', e); }
+    }
+    if (R.net.mode === 'local') await W.loadVault();
+    else if (R.net.linked === W.pubkey.toBase58()) await R.net.refreshVault().catch(e => console.warn(e));
+    W.loading = false;
+    R.game.checkBound();
+  };
+
+  // Reads Collector Crypt vault cards through the DAS API (getAssetsByOwner).
+  W.loadVault = async function () {
+    W.vault = [];
+    if (!W.pubkey || !cfg.vaultCollection) return;
+    try {
+      const r = await fetch(cfg.rpcUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          jsonrpc: '2.0', id: 'r151', method: 'getAssetsByOwner',
+          params: { ownerAddress: W.pubkey.toBase58(), page: 1, limit: 1000 },
+        }),
+      });
+      const j = await r.json();
+      const items = (j.result && j.result.items) || [];
+      W.vault = items
+        .filter(a => (a.grouping || []).some(g => g.group_key === 'collection' && g.group_value === cfg.vaultCollection))
+        .map(parseAsset);
+    } catch (e) {
+      console.warn('Vault read failed (does this RPC support DAS?)', e);
+    }
+  };
+
+  function ipfs(u) { return u && u.startsWith('ipfs://') ? 'https://ipfs.io/ipfs/' + u.slice(7) : u; }
+
+  function parseAsset(a) {
+    const md = (a.content && a.content.metadata) || {};
+    const attrs = md.attributes || [];
+    const find = re => {
+      const t = attrs.find(x => re.test(String(x.trait_type || x.traitType || '')));
+      return t ? t.value : null;
+    };
+    const gradeRaw = find(/^grade$/i) ?? find(/grade/i);
+    const m = String(gradeRaw || '').match(/\d+(\.\d+)?/);
+    const gradeNum = m ? parseFloat(m[0]) : 0;
+    const species = find(/pok[eé]mon|species|character/i) || md.name || 'Vault card';
+    const dexRaw = find(/dex|number/i);
+    const dex = dexRaw != null && /\d/.test(String(dexRaw)) ? parseInt(String(dexRaw).replace(/\D/g, ''), 10) : null;
+    const image = ipfs((a.content && a.content.links && a.content.links.image) ||
+      (a.content && a.content.files && a.content.files[0] && a.content.files[0].uri) || null);
+    return {
+      id: a.id, species: String(species), name: md.name || String(species),
+      grade: gradeRaw ? String(gradeRaw) : 'Ungraded', gradeNum, dex,
+      eligible: dex == null ? true : dex >= 1 && dex <= 151, dexUnknown: dex == null, image,
+    };
+  }
+
+  // ---------- Burn: half destroyed, half sent to the treasury, tagged with a memo ----------
+  function u64le(v) {
+    const out = new Uint8Array(8);
+    let x = BigInt(v);
+    for (let i = 0; i < 8; i++) { out[i] = Number(x & 255n); x >>= 8n; }
+    return out;
+  }
+  function ata(owner, mint) {
+    const { PublicKey } = web3();
+    return PublicKey.findProgramAddressSync(
+      [owner.toBytes(), new PublicKey(TOKEN_PROGRAM).toBytes(), mint.toBytes()],
+      new PublicKey(ATA_PROGRAM)
+    )[0];
+  }
+
+  W.burnForJob = async function (jobId, amount) {
+    if (!W.live()) throw new Error('Real burns need a linked wallet and a game server with BOOST configured.');
+    const { PublicKey, Transaction, TransactionInstruction } = web3();
+    const owner = W.pubkey;
+    const mint = new PublicKey(cfg.boosterMint);
+    const treasury = new PublicKey(cfg.treasuryWallet);
+    const tokenProgram = new PublicKey(TOKEN_PROGRAM);
+    const src = ata(owner, mint);
+    const dst = ata(treasury, mint);
+
+    const raw = BigInt(Math.round(amount * 10 ** cfg.boosterDecimals));
+    const burnAmt = (raw * BigInt(Math.round(R.RULES.burnShare * 10000))) / 10000n;
+    const sendAmt = raw - burnAmt;
+
+    const burnIx = new TransactionInstruction({
+      programId: tokenProgram,
+      keys: [
+        { pubkey: src, isSigner: false, isWritable: true },
+        { pubkey: mint, isSigner: false, isWritable: true },
+        { pubkey: owner, isSigner: true, isWritable: false },
+      ],
+      data: Uint8Array.from([8, ...u64le(burnAmt)]),
+    });
+    const sendIx = new TransactionInstruction({
+      programId: tokenProgram,
+      keys: [
+        { pubkey: src, isSigner: false, isWritable: true },
+        { pubkey: dst, isSigner: false, isWritable: true },
+        { pubkey: owner, isSigner: true, isWritable: false },
+      ],
+      data: Uint8Array.from([3, ...u64le(sendAmt)]),
+    });
+    const memoIx = new TransactionInstruction({
+      programId: new PublicKey(MEMO_PROGRAM),
+      keys: [{ pubkey: owner, isSigner: true, isWritable: false }],
+      data: new TextEncoder().encode(`r151:${jobId}:${amount}`),
+    });
+
+    const conn = W.conn();
+    const { blockhash, lastValidBlockHeight } = await conn.getLatestBlockhash('confirmed');
+    const tx = new Transaction({ feePayer: owner, blockhash, lastValidBlockHeight }).add(burnIx, sendIx, memoIx);
+
+    let signature;
+    if (W.provider.signAndSendTransaction) {
+      const res = await W.provider.signAndSendTransaction(tx);
+      signature = res.signature || res;
+    } else {
+      const signed = await W.provider.signTransaction(tx);
+      signature = await conn.sendRawTransaction(signed.serialize());
+    }
+    await conn.confirmTransaction({ signature, blockhash, lastValidBlockHeight }, 'confirmed');
+    return signature;
+  };
+})();
+
+</script>
+  <script>
+// Route 151 — bottom screen (bag, map, jobs, market), dialogs, battle menu, wallet modal.
+(function () {
+  const R = window.R151, cfg = R.config, C = R.Core;
+  const U = R.ui = { tab: 'bag', mode: 'tabs', dq: [], dTitle: '', claimId: null, boost: 0, busy: false, revealCard: null };
+  const $ = (s, r = document) => r.querySelector(s);
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const fmt = n => Number(n || 0).toLocaleString(undefined, { maximumFractionDigits: 2 });
+  const short = pk => pk.slice(0, 4) + '…' + pk.slice(-4);
+  const tierOf = id => R.TIERS.find(t => t.id === id) || R.TIERS[0];
+
+  U.init = function () {
+    document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click', () => U.setTab(b.dataset.tab)));
+    $('#panel').addEventListener('click', onPanelClick);
+    $('#walletBtn').addEventListener('click', walletClick);
+    $('#modal').addEventListener('click', onModalClick);
+    document.addEventListener('click', e => { const b = e.target.closest('button'); if (b) b.blur(); });
+    U.onWallet();
+    U.render();
+  };
+
+  U.setTab = function (t) {
+    if (U.mode !== 'tabs' && U.mode !== 'dialog') return;
+    U.tab = t;
+    if (U.mode === 'tabs') U.render(); else syncTabs();
+  };
+
+  function syncTabs() {
+    document.querySelectorAll('.tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === U.tab));
+    $('.tabs').classList.toggle('locked', U.mode !== 'tabs');
+  }
+
+  U.render = function () {
+    syncTabs();
+    const p = $('#panel');
+    let html = '';
+    switch (U.mode) {
+      case 'starter': html = vStarter(); break;
+      case 'dialog': html = vDialog(); break;
+      case 'battle': html = vBattle(); break;
+      case 'claim': html = vClaim(); break;
+      case 'reveal': html = vReveal(); break;
+      default:
+        html = { bag: vBag, map: vMap, jobs: vJobs, market: vMarket }[U.tab]();
+    }
+    const keepScroll = U.mode === 'tabs' && p.dataset.view === U.tab ? p.scrollTop : 0;
+    p.innerHTML = html;
+    p.dataset.view = U.mode === 'tabs' ? U.tab : U.mode;
+    p.scrollTop = keepScroll;
+    if (U.mode === 'tabs' && U.tab === 'map') drawMini();
+  };
+
+  U.refreshMap = () => { if (U.mode === 'tabs' && U.tab === 'map') drawMini(); };
+
+  // ---------- Views ----------
+  function vStarter() {
+    const ids = ['burrbo', 'embrit', 'puddlit'];
+    return `<div class="pad">
+      <h2>Pick your starter</h2>
+      <p class="mute">Starters are free. Bind a vault card later to set the level cap from its grade.</p>
+      <div class="starters">${ids.map(id => {
+        const sp = R.SPECIES[id];
+        return `<button class="starter" data-act="starter" data-v="${id}">
+          <img class="px" src="${R.spriteURL(id)}" alt="">
+          <b>${sp.name}</b><span class="type t-${sp.type}">${sp.type}</span><small>${sp.move}</small></button>`;
+      }).join('')}</div></div>`;
+  }
+
+  U.dialog = function (title, lines, cb) {
+    U.dTitle = title; U.dq = lines.slice(); U.dcb = cb; U.mode = 'dialog'; U.render();
+  };
+  U.nextDialog = function () {
+    U.dq.shift();
+    if (!U.dq.length) {
+      U.mode = 'tabs';
+      const cb = U.dcb; U.dcb = null;
+      U.render();
+      if (cb) cb();
+    } else U.render();
+  };
+  function vDialog() {
+    return `<div class="dialog">
+      <div class="dbox">${U.dTitle ? `<b class="dtitle">${esc(U.dTitle)}</b>` : ''}<p>${esc(U.dq[0] || '')}</p>
+      <button class="next" data-act="next" aria-label="Continue">▶</button></div>
+      <p class="dhint">Press A or Enter to continue</p></div>`;
+  }
+
+  function vBattle() {
+    const b = R.battle;
+    if (!b) return '';
+    const sp = R.game.species();
+    if (b.phase !== 'menu') {
+      return `<div class="battle"><div class="blog">${esc(b.msg)}</div>
+        <button class="cont" data-act="bnext">Continue ▶</button></div>`;
+    }
+    return `<div class="battle"><div class="blog">${esc(b.msg)}</div><div class="moves">
+      <button data-act="bact" data-v="0"><b>Strike</b><small>normal, sure hit</small></button>
+      <button data-act="bact" data-v="1" class="t-${sp.type}"><b>${esc(sp.move)}</b><small>${sp.type}, strong</small></button>
+      <button data-act="bact" data-v="2"><b>Berry ×${R.state.bag.berry}</b><small>heal 40%</small></button>
+      <button data-act="bact" data-v="3"><b>Run</b><small>${b.boss ? 'not here' : 'usually works'}</small></button>
+    </div><p class="dhint">Keys 1–4 pick a move</p></div>`;
+  }
+
+  function cardHTML(c, actions) {
+    const t = tierOf(c.tier);
+    return `<div class="cc" style="--tc:${t.color}">
+      <div class="cc-art ${c.tier}"><span>${t.name[0]}</span></div>
+      <div class="cc-txt"><b>${esc(c.name)}</b><span>${esc(c.grade)}, ${t.name.toLowerCase()}</span>
+      <span class="mute">${esc(c.uid)}, about $${fmt(c.value)}</span>${actions || ''}</div></div>`;
+  }
+
+  function vBag() {
+    const s = R.state, sp = R.SPECIES[s.starter] || R.SPECIES.embrit, cap = C.levelCap(s), mh = C.maxHp(s.lvl), b = s.bound;
+    const hpPct = Math.round((s.hp / mh) * 100);
+    const xpPct = s.lvl >= cap ? 100 : Math.round((s.xp / C.xpNeed(s.lvl)) * 100);
+    const portrait = b
+      ? (b.image ? `<img class="cardimg" src="${esc(b.image)}" alt="${esc(b.species)}">` : `<div class="holo"><span>${esc(b.grade)}</span></div>`)
+      : `<img class="px" src="${R.spriteURL(s.starter)}" alt="">`;
+
+    const vault = R.net.vaultList();
+    let vaultHTML;
+    if (!vault.length) {
+      const N = R.net;
+      const why = !R.wallet.pubkey ? 'Connect a wallet to read your vault cards.'
+        : N.mode === 'remote' && N.linked !== R.wallet.pubkey.toBase58() ? 'Link your wallet to read your vault cards.'
+        : 'No vault cards from the original 151 in this wallet yet.';
+      vaultHTML = `<p class="mute">${why}</p>`;
+    } else {
+      vaultHTML = vault.map(c => {
+        const bound = b && b.id === c.id;
+        const capFor = C.capForGrade(c.gradeNum);
+        const btn = !c.eligible ? `<span class="tag">Not one of the 151</span>`
+          : bound ? `<button class="sm" data-act="unbind">Unbind</button>`
+          : `<button class="sm gold" data-act="bind" data-v="${esc(c.id)}">Bind</button>`;
+        return `<div class="vrow ${bound ? 'on' : ''}"><div><b>${esc(c.species)}</b>
+          <span class="mute">${esc(c.grade)}, cap Lv ${capFor}</span></div>${btn}</div>`;
+      }).join('');
+    }
+
+    const cards = s.cards.filter(c => c.status !== 'sold');
+    const cardsHTML = cards.length ? cards.map(c => {
+      const acts = c.status === 'held'
+        ? `<div class="cc-acts"><button class="sm" data-act="redeem" data-v="${c.uid}">Redeem slab</button><button class="sm" data-act="resell" data-v="${c.uid}">Resell</button></div>`
+        : `<div class="cc-acts"><span class="tag">${c.status === 'redeem' ? 'Slab shipping' : 'Listed'}</span></div>`;
+      return cardHTML(c, acts);
+    }).join('') : `<p class="mute">Clear a job to earn your first card.</p>`;
+
+    return `<div class="pad">
+      <div class="mon ${b ? 'vaulted' : ''}">
+        <div class="portrait">${portrait}</div>
+        <div class="info">
+          <div class="mrow"><b>${esc(b ? b.species : sp.name)}</b><span class="type t-${sp.type}">${sp.type}</span></div>
+          <div class="mute">Lv ${s.lvl} of ${cap}${b ? ` (${esc(b.grade)})` : ' (free cap)'}</div>
+          <div class="bar hp"><i style="width:${hpPct}%"></i><span>HP ${s.hp}/${mh}</span></div>
+          <div class="bar xp"><i style="width:${xpPct}%"></i><span>${s.lvl >= cap ? 'Level cap' : `XP ${s.xp}/${C.xpNeed(s.lvl)}`}</span></div>
+        </div>
+      </div>
+      <h3>Items</h3>
+      <div class="items">
+        <div class="item"><span>Berry ×${s.bag.berry}</span><button class="sm" data-act="berry" ${s.bag.berry && s.hp < mh ? '' : 'disabled'}>Eat</button></div>
+        ${s.bag.parcel ? '<div class="item"><span>Parcel ×1</span><span class="mute">deliver it</span></div>' : ''}
+        <div class="item"><span>Cash from resales</span><span>$${fmt(s.credits)}</span></div>
+      </div>
+      <h3>Vault card</h3>${vaultHTML}
+      <h3>Earned cards (${cards.length})</h3>${cardsHTML}
+    </div>`;
+  }
+
+  function vMap() {
+    const s = R.state, area = R.areaName(R.maps[s.map], s.x, s.y);
+    const job = s.active ? C.job(s.active) : null;
+    return `<div class="pad mapv">
+      <div class="mrow"><b>${esc(area)}</b><span class="mute">${s.map === 'overworld' ? 'Overworld' : 'Underground'}</span></div>
+      <canvas id="mini"></canvas>
+      <div class="legend"><span><i class="lg you"></i>You</span><span><i class="lg goal"></i>${job ? 'Objective' : 'No job taken'}</span><span><i class="lg grass"></i>Tall grass</span></div>
+    </div>`;
+  }
+
+  function drawMini() {
+    const c = $('#mini');
+    if (!c) return;
+    const s = R.state, m = R.maps[s.map];
+    const sc = Math.max(2, Math.min(Math.floor(236 / m.w), Math.floor(132 / m.h)));
+    c.width = m.w * sc; c.height = m.h * sc;
+    const g = c.getContext('2d');
+    for (let y = 0; y < m.h; y++) for (let x = 0; x < m.w; x++) {
+      g.fillStyle = R.TILE_COLOR[C.tileAt(s, m, x, y)] || '#000';
+      g.fillRect(x * sc, y * sc, sc, sc);
+    }
+    const tg = C.target(s);
+    if (tg && tg.map === s.map) {
+      g.fillStyle = '#f2b632'; g.strokeStyle = '#1c1a24';
+      g.fillRect(tg.x * sc - 1, tg.y * sc - 1, sc + 2, sc + 2); g.strokeRect(tg.x * sc - 1.5, tg.y * sc - 1.5, sc + 3, sc + 3);
+    }
+    g.fillStyle = '#ff2a6a'; g.strokeStyle = '#fff';
+    g.fillRect(s.x * sc - 1, s.y * sc - 1, sc + 2, sc + 2); g.strokeRect(s.x * sc - 1.5, s.y * sc - 1.5, sc + 3, sc + 3);
+  }
+
+  function vJobs() {
+    return `<div class="pad">
+      <p class="mute">Free to take, no wallet needed. Each clear pays a vault card bought by the treasury. Odds are shown before you claim.</p>
+      ${R.JOBS.map(j => {
+        const js = C.js(R.state, j.id), st = js.status;
+        const btn = st === 'ready' ? `<button class="sm gold" data-act="claim" data-v="${j.id}">Claim card</button>`
+          : st === 'active' ? `<span class="tag on">In progress</span>`
+          : `<button class="sm" data-act="accept" data-v="${j.id}">Take job</button>`;
+        return `<div class="job ${st}"><div class="jh"><b>${esc(j.title)}</b>${btn}</div>
+          <div class="mute">${esc(j.area)}</div>
+          ${st !== 'open' ? `<div class="obj">${esc(C.objective(R.state, j.id))}</div>` : ''}
+          <div class="pay">Pays a ${esc(j.pool)} card</div></div>`;
+      }).join('')}</div>`;
+  }
+
+  function vMarket() {
+    const s = R.state, st = R.net.global || s.stats;
+    const sold = s.cards.filter(c => c.status === 'sold' || c.status === 'listed');
+    const half = Math.round(R.RULES.burnShare * 100);
+    return `<div class="pad">
+      <h2>Market stall</h2>
+      <p class="mute">Sell earned cards from your bag. ${R.RULES.resaleFeeBps / 100}% of each sale buys back BOOST.</p>
+      <div class="stats">
+        <div><b>${fmt(st.burned)}</b><span>BOOST destroyed</span></div>
+        <div><b>${fmt(st.toCards)}</b><span>BOOST spent on cards</span></div>
+        <div><b>$${fmt(st.fees)}</b><span>Resale fees</span></div>
+        <div><b>$${fmt(st.buyback)}</b><span>Sent to buybacks</span></div>
+      </div>
+      <p class="mute">Every burn splits ${half}/${100 - half}: destroyed, then put toward the card being awarded.${R.net.global ? ' Totals are game-wide.' : ''}</p>
+      <h3>Your sales (${sold.length})</h3>
+      ${sold.length ? sold.map(c => cardHTML(c, `<div class="cc-acts"><span class="tag">${c.status === 'sold' ? 'Sold' : 'Listed'}</span></div>`)).join('') : '<p class="mute">Nothing sold yet.</p>'}
+    </div>`;
+  }
+
+  function vClaim() {
+    const j = C.job(U.claimId), bal = R.net.balance();
+    const rows = R.BOOSTS.map((b, i) => {
+      const odds = oddsFor(i), can = bal >= b.burn;
+      return `<button class="boost ${U.boost === i ? 'on' : ''}" data-act="boost" data-v="${i}" ${!can && b.burn ? 'disabled' : ''}>
+        <span class="bh"><b>${b.name}</b><span>${b.burn ? `Burn ${fmt(b.burn)}` : 'Free'}</span></span>
+        <span class="odds">${odds.map((p, k) => `<i style="width:${p}%;background:${R.TIERS[k].color}"></i>`).join('')}</span>
+        <small>PSA 10 ${odds[3]}%, PSA 9 ${odds[2]}%</small></button>`;
+    }).join('');
+    return `<div class="pad">
+      <h2>${esc(j.title)}</h2>
+      <p class="mute">The treasury buys a ${esc(j.pool)} card for you. Burn BOOST to push the grade up.</p>
+      <div class="boosts">${rows}</div>
+      <div class="keys">${R.TIERS.map(t => `<span><i style="background:${t.color}"></i>${t.grade}</span>`).join('')}</div>
+      <p class="mute">Wallet balance: ${fmt(bal)} BOOST. A free clear always pays a card.</p>
+      ${needLink() ? '<p class="warn">Link your wallet so the treasury knows where to send the card.</p>' : ''}
+      <div class="row"><button class="sm" data-act="cancel">Back</button>
+      ${needLink() ? '<button class="sm gold" data-act="link">Link wallet</button>' : `<button class="sm gold" data-act="doClaim" ${U.busy ? 'disabled' : ''}>${U.busy ? 'Waiting for signature…' : (R.BOOSTS[U.boost].burn ? `Burn and claim` : 'Claim card')}</button>`}</div>
+    </div>`;
+  }
+
+  function vReveal() {
+    const c = U.revealCard, t = tierOf(c.tier);
+    return `<div class="pad reveal">
+      <h2 style="color:${t.color}">${t.name} pull</h2>
+      ${cardHTML(c)}
+      <p class="mute">The treasury bought this card and sent it to your wallet.</p>
+      ${c.burnSig ? `<p class="mute">Burn tx ${esc(short(c.burnSig))}</p>` : ''}
+      <button class="sm gold" data-act="closeReveal">Put it in the bag</button>
+    </div>`;
+  }
+
+  U.closeReveal = function () {
+    R.reveal = null; U.revealCard = null; U.mode = 'tabs'; U.tab = 'bag'; U.render();
+  };
+
+  function oddsFor(bi) {
+    const w = R.BOOSTS[bi].weights, tot = w.reduce((a, b) => a + b, 0);
+    return w.map(x => Math.round((x / tot) * 100));
+  }
+  function needLink() {
+    return R.net.mode === 'remote' && (!R.wallet.pubkey || R.net.linked !== R.wallet.pubkey.toBase58());
+  }
+
+  // ---------- Panel actions ----------
+  async function run(fn) {
+    try { await fn(); }
+    catch (err) { console.error(err); U.toast(err && err.message ? err.message : 'Something went wrong.'); }
+    if (U.mode !== 'battle') U.render();
+    U.onWallet();
+  }
+  const send = action => run(async () => R.game.handleEvents(await R.net.send(action)));
+  U.send = send;
+
+  const ACT = {
+    starter: v => R.game.chooseStarter(v),
+    next: () => U.nextDialog(),
+    bnext: () => R.game.battleNext(),
+    bact: v => R.game.battleAct(+v),
+    accept: v => send({ type: 'accept', job: v }),
+    claim: v => { U.claimId = v; U.boost = 0; U.mode = 'claim'; U.render(); },
+    boost: v => { U.boost = +v; U.render(); },
+    cancel: () => { U.mode = 'tabs'; U.render(); },
+    link: () => openLinkModal(),
+    doClaim: async () => {
+      if (U.busy) return;
+      U.busy = true; U.render();
+      try {
+        const boost = R.BOOSTS[U.boost];
+        let burnSig = null;
+        if (boost.burn > 0 && R.wallet.live()) {
+          if ((R.wallet.boost || 0) < boost.burn) throw new Error(`You need ${boost.burn} BOOST in your wallet for ${boost.name}.`);
+          burnSig = await R.wallet.burnForJob(U.claimId, boost.burn);
+        }
+        const card = await R.net.claim(U.claimId, U.boost, burnSig);
+        if (burnSig) R.wallet.refresh().then(() => U.onWallet());
+        U.revealCard = card;
+        R.reveal = { card, t: 0 };
+        U.mode = 'reveal';
+      } catch (err) {
+        console.error(err);
+        U.toast(err && err.message ? err.message : 'The claim did not go through.');
+      }
+      U.busy = false;
+      U.render();
+      U.onWallet();
+    },
+    closeReveal: () => U.closeReveal(),
+    berry: () => send({ type: 'berry' }),
+    bind: v => run(async () => { R.game.handleEvents(await R.net.bind(v)); R.game.onBoundChange(); }),
+    unbind: () => run(async () => { R.game.handleEvents(await R.net.send({ type: 'unbind' })); R.game.onBoundChange(); }),
+    redeem: v => run(async () => U.toast(await R.net.redeem(v))),
+    resell: v => run(async () => U.toast(await R.net.resell(v))),
+  };
+  function onPanelClick(e) {
+    const el = e.target.closest('[data-act]');
+    if (!el || el.disabled) return;
+    const fn = ACT[el.dataset.act];
+    if (fn) fn(el.dataset.v, el);
+  }
+
+  // ---------- Header + wallet ----------
+  U.onWallet = function () {
+    const W = R.wallet, btn = $('#walletBtn');
+    if (W.pubkey) {
+      btn.textContent = `${W.name} ${short(W.pubkey.toBase58())}`;
+      btn.classList.add('on');
+    } else {
+      btn.textContent = 'Connect wallet';
+      btn.classList.remove('on');
+    }
+    const N = R.net, linked = W.pubkey && N.linked === W.pubkey.toBase58();
+    const nc = $('#netChip');
+    nc.textContent = W.pubkey ? (linked ? 'Linked' : (N.mode === 'remote' ? 'Not linked' : '')) : '';
+    nc.classList.toggle('hidden', !nc.textContent);
+    nc.classList.toggle('live', !!linked);
+    $('#tokChip').textContent = `${fmt(N.balance())} BOOST`;
+    $('#tokChip').classList.toggle('hidden', !W.pubkey);
+    const sc = $('#solChip');
+    sc.textContent = W.sol != null ? `${fmt(W.sol)} SOL` : '';
+    sc.classList.toggle('hidden', W.sol == null);
+    if (U.mode === 'tabs') U.render();
+  };
+
+  function walletClick() {
+    if (R.wallet.pubkey) return openWalletMenu();
+    openPicker();
+  }
+
+  let pickerList = [];
+  function openPicker() {
+    pickerList = R.wallet.detect();
+    const sdk = typeof window.solanaWeb3 !== 'undefined';
+    const body = !sdk
+      ? `<p>The Solana SDK did not load. Check your connection and reload the page.</p>`
+      : pickerList.length
+        ? `<div class="wlist">${pickerList.map((w, i) => `<button class="wbtn" data-w="${i}">${esc(w.name)}</button>`).join('')}</div>`
+        : `<p>No Solana wallet found in this browser. Install one, then reload:</p>
+           <div class="wlist"><a class="wbtn" href="https://phantom.app/" target="_blank" rel="noopener">Phantom</a>
+           <a class="wbtn" href="https://solflare.com/" target="_blank" rel="noopener">Solflare</a>
+           <a class="wbtn" href="https://backpack.app/" target="_blank" rel="noopener">Backpack</a></div>
+           <p class="mute">Wallet extensions do not run on file:// pages. Serve the folder over http.</p>`;
+    showModal(`<h2>Connect a Solana wallet</h2>
+      <p class="mute">Playing is free without one. A wallet lets you bind vault cards, burn BOOST and receive payouts.</p>
+      ${body}<button class="sm" data-close>Close</button>`);
+  }
+
+  function openWalletMenu() {
+    const W = R.wallet, addr = W.pubkey.toBase58();
+    showModal(`<h2>${esc(W.name)}</h2>
+      <p class="addr">${esc(addr)}</p>
+      <div class="stats">
+        <div><b>${W.sol != null ? fmt(W.sol) : '…'}</b><span>SOL</span></div>
+        <div><b>${cfg.boosterMint ? (W.boost != null ? fmt(W.boost) : '…') : 'n/a'}</b><span>BOOST</span></div>
+        <div><b>${cfg.vaultCollection ? W.vault.length : 'n/a'}</b><span>Vault cards</span></div>
+        <div><b>${R.net.linked === addr ? 'Yes' : 'No'}</b><span>Linked to save</span></div>
+      </div>
+      ${needLink() ? '<p class="mute">This wallet is not linked to your save yet.</p>' : ''}
+      <div class="row">${needLink() ? '<button class="sm gold" data-wact="link">Link to my save</button>' : ''}<button class="sm" data-wact="refresh">Refresh</button><button class="sm" data-wact="copy">Copy address</button>
+      <button class="sm" data-wact="disconnect">Disconnect</button></div>
+      <button class="sm" data-close>Close</button>`);
+  }
+
+  function openLinkModal() {
+    if (!R.wallet.pubkey) return openPicker();
+    showModal(`<h2>Link your wallet</h2>
+      <p>Linking ties this wallet to your save so the server can send payouts to it and read your vault cards.
+      You sign a short text message. It is free and does not move any funds.</p>
+      <label class="check"><input type="checkbox" id="terms18"> I am 18 or older (or the age of majority where I live), paid features are legal where I live, and I accept the terms.</label>
+      <div class="row"><button class="sm" data-close>Not now</button><button class="sm gold" data-lact="sign" disabled>Sign and link</button></div>`);
+    const box = $('#terms18'), btn = $('[data-lact="sign"]');
+    box.addEventListener('change', () => { btn.disabled = !box.checked; });
+  }
+  U.openLinkModal = openLinkModal;
+
+  function showModal(html) {
+    const m = $('#modal');
+    m.innerHTML = `<div class="mbox" role="dialog" aria-modal="true">${html}</div>`;
+    m.classList.remove('hidden');
+  }
+  function closeModal() { $('#modal').classList.add('hidden'); }
+
+  async function onModalClick(e) {
+    if (e.target.id === 'modal' || e.target.closest('[data-close]')) return closeModal();
+    const w = e.target.closest('[data-w]');
+    if (w) {
+      const entry = pickerList[+w.dataset.w];
+      w.textContent = `Approve in ${entry.name}…`;
+      try {
+        await R.wallet.connect(entry);
+        closeModal();
+        U.toast(`Connected ${entry.name}.`);
+        if (R.net.mode === 'remote' && R.net.linked !== R.wallet.pubkey.toBase58()) openLinkModal();
+      }
+      catch (err) { console.error(err); w.textContent = entry.name; U.toast(err && err.message ? err.message : 'Connection was rejected.'); }
+      return;
+    }
+    const l = e.target.closest('[data-lact]');
+    if (l && !l.disabled) {
+      l.textContent = 'Approve in your wallet…';
+      try { await R.net.linkWallet(); closeModal(); U.toast('Wallet linked to your save.'); U.onWallet(); U.render(); }
+      catch (err) { console.error(err); l.textContent = 'Sign and link'; U.toast(err && err.message ? err.message : 'Linking was rejected.'); }
+      return;
+    }
+    const a = e.target.closest('[data-wact]');
+    if (!a) return;
+    const act = a.dataset.wact;
+    if (act === 'refresh') { a.textContent = 'Refreshing…'; await R.wallet.refresh(); U.onWallet(); openWalletMenu(); }
+    if (act === 'copy') { try { await navigator.clipboard.writeText(R.wallet.pubkey.toBase58()); U.toast('Address copied.'); } catch (err) { U.toast('Copy failed.'); } }
+    if (act === 'link') { closeModal(); openLinkModal(); }
+    if (act === 'disconnect') { await R.wallet.disconnect(); closeModal(); U.toast('Wallet disconnected.'); }
+  }
+
+  let toastTimer = null;
+  U.toast = function (msg) {
+    const t = $('#toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+  };
+})();
+
+</script>
+  <script>
+// Route 151 — game loop, movement, encounters, battles and the top screen.
+(function () {
+  const R = window.R151, T = R.T, cfg = R.config;
+  const cv = document.getElementById('top');
+  const ctx = cv.getContext('2d');
+  const TS = 16, VW = 256, VH = 192;
+  const FONT = '"Silkscreen", "Press Start 2P", monospace';
+
+  const C = R.Core;
+  const G = R.game = {};
+  G.species = () => R.SPECIES[R.state.starter] || R.SPECIES.embrit;
+  G.tileAt = (m, x, y) => C.tileAt(R.state, m, x, y);
+
+  // ---------- Vault-card image ----------
+  G.cardImg = null;
+  G.onBoundChange = function () {
+    const b = R.state.bound;
+    G.cardImg = null;
+    if (b && b.image) {
+      const im = new Image();
+      im.onload = () => { if (R.state.bound && R.state.bound.image === b.image) G.cardImg = im; };
+      im.src = b.image;
+    }
+  };
+  // Offline play: drop a wallet card that left the wallet. The server does this itself when connected.
+  G.checkBound = function () {
+    const b = R.state.bound;
+    if (R.net.mode !== 'local' || !b) return;
+    if (!(R.wallet.pubkey && R.wallet.vault.some(c => c.id === b.id))) {
+      R.state.bound = null; R.net.save(); G.onBoundChange();
+      R.ui.toast('Vault card unbound: it is no longer in the connected wallet.');
+    }
+  };
+
+  // ---------- Player (client-side prediction of the server's movement) ----------
+  const DIRS = C.DIRS;
+  const P = { px: 0, py: 0, moving: false, tx: 0, ty: 0, walkF: 0, pending: false, result: null, sent: null };
+  const syncP = () => { P.px = R.state.x * TS; P.py = R.state.y * TS; P.moving = false; };
+  let frame = 0, banner = { text: '', t: 0 }, lastArea = '', fade = 0, ready = false;
+  let faceDir = 'down';
+
+  // ---------- Input ----------
+  const held = [];
+  const KEYMAP = { ArrowUp: 'up', KeyW: 'up', ArrowDown: 'down', KeyS: 'down', ArrowLeft: 'left', KeyA: 'left', ArrowRight: 'right', KeyD: 'right' };
+  const hold = d => { if (!held.includes(d)) held.push(d); };
+  const release = d => { const i = held.indexOf(d); if (i >= 0) held.splice(i, 1); };
+
+  const onPlay = () => document.body.classList.contains('route-play');
+  window.addEventListener('keydown', e => {
+    if (!onPlay()) return;
+    if (!document.getElementById('modal').classList.contains('hidden')) return;
+    const d = KEYMAP[e.code];
+    if (d) { hold(d); e.preventDefault(); return; }
+    if (e.repeat) return;
+    if (['KeyZ', 'Enter', 'Space'].includes(e.code)) { e.preventDefault(); G.pressA(); }
+    else if (['KeyX', 'Escape', 'Backspace'].includes(e.code)) { e.preventDefault(); G.pressB(); }
+    else if (/^Digit[1-4]$/.test(e.code) && R.battle) G.battleAct(+e.code.slice(5) - 1);
+  });
+  window.addEventListener('keyup', e => { const d = KEYMAP[e.code]; if (d) release(d); });
+  window.addEventListener('blur', () => { held.length = 0; });
+
+  document.querySelectorAll('[data-dir]').forEach(b => {
+    const d = b.dataset.dir;
+    b.addEventListener('pointerdown', e => { e.preventDefault(); hold(d); if (b.setPointerCapture) b.setPointerCapture(e.pointerId); });
+    ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(ev => b.addEventListener(ev, () => release(d)));
+  });
+  document.querySelector('[data-key="a"]').addEventListener('click', () => G.pressA());
+  document.querySelector('[data-key="b"]').addEventListener('click', () => G.pressB());
+
+  G.pressA = function () {
+    const U = R.ui;
+    if (!ready) return;
+    if (U.mode === 'reveal') return U.closeReveal();
+    if (U.mode === 'dialog') return U.nextDialog();
+    if (R.battle) { if (R.battle.phase === 'msg') G.battleNext(); return; }
+    if (U.mode !== 'tabs' || !R.state.starter || P.moving || P.pending) return;
+    U.send({ type: 'interact', dir: faceDir });
+  };
+  G.pressB = function () {
+    const U = R.ui;
+    if (U.mode === 'dialog') return U.nextDialog();
+    if (U.mode === 'claim' && !U.busy) { U.mode = 'tabs'; U.render(); }
+    if (R.battle && R.battle.phase === 'msg') G.battleNext();
+  };
+
+  // ---------- Server events ----------
+  G.handleEvents = function (events) {
+    for (const e of events || []) {
+      switch (e.k) {
+        case 'dialog': R.ui.dialog(e.title, e.lines); break;
+        case 'tab': R.ui.tab = e.tab; break;
+        case 'toast': R.ui.toast(e.text); break;
+        case 'warp': fade = 18; break;
+        case 'bstart':
+          R.battle = { id: e.id, lvl: e.lvl, boss: e.boss, where: e.where, emax: e.emax, showE: e.emax, showP: e.php,
+            queue: [{ text: e.text }], phase: 'msg', msg: '', over: null, flashE: 0, flashP: 0, intro: 24 };
+          held.length = 0;
+          R.ui.mode = 'battle';
+          G.battleNext();
+          break;
+        case 'bmsg': if (R.battle) R.battle.queue.push(e); break;
+        case 'bend': if (R.battle) R.battle.over = e.result; break;
+      }
+    }
+    R.ui.refreshMap();
+  };
+
+  G.chooseStarter = function (id) {
+    R.net.send({ type: 'starter', id }).then(events => {
+      G.handleEvents(events);
+      syncP();
+      R.ui.mode = 'tabs';
+      R.ui.dialog(`${R.SPECIES[id].name} it is`, [
+        'You are the creature now. Walk with the arrow keys, WASD or the d-pad.',
+        'Press A, Z or Enter to talk, read signs and open doors.',
+        'Read the job board in Lantern Hollow. Every clear pays a real vault card.',
+      ]);
+    }).catch(err => R.ui.toast(err.message));
+  };
+
+  // ---------- Movement ----------
+  function update() {
+    frame++;
+    if (fade > 0) fade--;
+    if (banner.t > 0) banner.t--;
+    if (R.reveal) R.reveal.t++;
+    if (R.battle) {
+      const b = R.battle;
+      if (b.flashE > 0) b.flashE--;
+      if (b.flashP > 0) b.flashP--;
+      if (b.intro > 0) b.intro--;
+      return;
+    }
+    const s = R.state;
+    const free = ready && R.ui.mode === 'tabs' && s.starter && !R.reveal;
+    if (!P.moving && !P.pending && free && held.length) {
+      const d = held[held.length - 1];
+      faceDir = d;
+      const [dx, dy] = DIRS[d];
+      const nx = s.x + dx, ny = s.y + dy;
+      if (C.walkable(s, s.map, nx, ny)) {
+        P.moving = true; P.tx = nx; P.ty = ny; P.pending = true;
+        R.net.send({ type: 'step', dir: d })
+          .then(events => { P.result = { events }; })
+          .catch(err => { P.result = { events: [], error: err }; })
+          .finally(() => { P.pending = false; settle(); });
+      }
+    }
+    if (P.moving) {
+      const gx = P.tx * TS, gy = P.ty * TS, sp = 2;
+      P.px += Math.sign(gx - P.px) * Math.min(sp, Math.abs(gx - P.px));
+      P.py += Math.sign(gy - P.py) * Math.min(sp, Math.abs(gy - P.py));
+      P.walkF++;
+      if (P.px === gx && P.py === gy) { P.moving = false; settle(); }
+    }
+  }
+
+  // Reconcile once the step animation has finished and the authoritative result is in.
+  function settle() {
+    if (P.moving || P.pending || !P.result) return;
+    const res = P.result;
+    P.result = null;
+    const s = R.state;
+    if (res.error && !/too fast/i.test(res.error.message)) R.ui.toast(res.error.message);
+    if (s.x * TS !== P.px || s.y * TS !== P.py) syncP();
+    faceDir = s.dir;
+    checkArea();
+    G.handleEvents(res.events);
+  }
+
+  function checkArea() {
+    const s = R.state, a = R.areaName(R.maps[s.map], s.x, s.y);
+    if (a !== lastArea) { lastArea = a; banner = { text: a, t: 150 }; }
+  }
+
+  // ---------- Battle playback ----------
+  G.battleNext = function () {
+    const b = R.battle;
+    if (!b) return;
+    const item = b.queue.shift();
+    if (!item) {
+      if (b.over) return endBattleView();
+      b.phase = 'menu';
+      b.msg = `What will ${G.species().name} do?`;
+      return R.ui.render();
+    }
+    b.phase = 'msg';
+    b.msg = item.text;
+    if (item.ehp != null) b.showE = item.ehp;
+    if (item.php != null) b.showP = item.php;
+    if (item.fe) b.flashE = 14;
+    if (item.fp) b.flashP = 14;
+    R.ui.render();
+  };
+
+  G.battleAct = function (i) {
+    const b = R.battle;
+    if (!b || b.phase !== 'menu') return;
+    b.phase = 'wait';
+    R.ui.render();
+    R.net.send({ type: 'battle', move: i })
+      .then(events => { G.handleEvents(events); })
+      .catch(err => { R.ui.toast(err.message); if (!R.state.battle) b.over = b.over || 'sync'; })
+      .finally(() => { if (R.battle && R.battle.phase === 'wait') G.battleNext(); });
+  };
+
+  function endBattleView() {
+    const b = R.battle;
+    R.battle = null;
+    if (b.over === 'faint' || b.over === 'sync') { syncP(); fade = 24; }
+    faceDir = R.state.dir;
+    checkArea();
+    R.ui.mode = 'tabs';
+    R.ui.render();
+  }
+
+  // ---------- Drawing ----------
+  function text(str, x, y, color = '#fff', size = 8, align = 'left') {
+    ctx.font = `${size}px ${FONT}`;
+    ctx.textAlign = align;
+    ctx.textBaseline = 'top';
+    ctx.fillStyle = 'rgba(0,0,0,.6)';
+    ctx.fillText(str, x + 1, y + 1);
+    ctx.fillStyle = color;
+    ctx.fillText(str, x, y);
+  }
+  function panel(x, y, w, h, fill = 'rgba(20,22,40,.82)') {
+    ctx.fillStyle = '#0e0f1c'; ctx.fillRect(x - 1, y - 1, w + 2, h + 2);
+    ctx.fillStyle = fill; ctx.fillRect(x, y, w, h);
+    ctx.fillStyle = 'rgba(255,255,255,.18)'; ctx.fillRect(x, y, w, 1);
+  }
+  function drawSprite(img, x, y, w, h, flip) {
+    if (flip) {
+      ctx.save(); ctx.translate(x + w, y); ctx.scale(-1, 1); ctx.drawImage(img, 0, 0, w, h); ctx.restore();
+    } else ctx.drawImage(img, x, y, w, h);
+  }
+
+  function renderWorld() {
+    const s = R.state, m = R.maps[s.map];
+    const cx = Math.round(Math.max(0, Math.min(P.px + 8 - VW / 2, m.w * TS - VW)));
+    const cy = Math.round(Math.max(0, Math.min(P.py + 8 - VH / 2, m.h * TS - VH)));
+    const f = (frame >> 5) & 1;
+    const x0 = Math.floor(cx / TS), y0 = Math.floor(cy / TS);
+    for (let ty = y0; ty <= y0 + VH / TS; ty++) {
+      for (let tx = x0; tx <= x0 + VW / TS; tx++) {
+        ctx.drawImage(R.tileImg(G.tileAt(m, tx, ty), f), tx * TS - cx, ty * TS - cy);
+      }
+    }
+    if (s.map === 'den' && !s.bossDown) {
+      const bob = (frame >> 4) & 1;
+      drawSprite(R.sprite('thornox'), m.boss.x * TS - cx - 4, m.boss.y * TS - cy - 10 - bob, 24, 24, false);
+    }
+
+    // Player
+    const px = Math.round(P.px - cx), py = Math.round(P.py - cy);
+    const bob = P.moving ? ((P.walkF >> 2) & 1) : ((frame >> 5) & 1 ? 0 : 0);
+    ctx.fillStyle = 'rgba(0,0,0,.25)';
+    ctx.fillRect(px + 3, py + 13, 10, 2);
+    if (s.bound) {
+      for (let i = 0; i < 4; i++) {
+        const a = frame / 18 + (i * Math.PI) / 2;
+        ctx.fillStyle = i % 2 ? '#f2b632' : '#fff6c8';
+        const sz = ((frame >> 3) + i) % 3 === 0 ? 2 : 1;
+        ctx.fillRect(Math.round(px + 8 + Math.cos(a) * 10), Math.round(py + 8 + Math.sin(a) * 7), sz, sz);
+      }
+    }
+    if (s.starter) drawSprite(R.sprite(s.starter), px, py - 2 - bob, 16, 16, faceDir === 'left');
+    if (!P.moving && G.tileAt(m, s.x, s.y) === T.TALL) {
+      ctx.drawImage(R.tileImg(T.TALL, f), 0, 10, 16, 6, px, py + 10, 16, 6);
+    }
+
+    // HUD
+    if (banner.t > 0 && s.starter) {
+      const a = Math.min(1, banner.t / 20);
+      ctx.globalAlpha = a;
+      ctx.font = `8px ${FONT}`;
+      const w = Math.ceil(ctx.measureText(banner.text).width) + 14;
+      panel(6, 6, w, 15);
+      text(banner.text, 13, 9, '#fff6d8');
+      ctx.globalAlpha = 1;
+    }
+    if (s.active && s.starter) {
+      const obj = C.objective(s, s.active);
+      panel(0, VH - 15, VW, 15, 'rgba(20,22,40,.78)');
+      text(obj.length > 44 ? obj.slice(0, 43) + '…' : obj, 5, VH - 12, C.js(s, s.active).status === 'ready' ? '#f2b632' : '#e6ecff');
+    }
+    if (!s.starter) {
+      ctx.fillStyle = 'rgba(14,15,28,.62)'; ctx.fillRect(0, 54, VW, 74);
+      ctx.font = `16px "Press Start 2P", monospace`;
+      ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+      ctx.fillStyle = '#0e0f1c'; ctx.fillText('ROUTE 151', VW / 2 + 2, 66);
+      ctx.fillStyle = '#f2b632'; ctx.fillText('ROUTE 151', VW / 2, 64);
+      ['embrit', 'puddlit', 'burrbo'].forEach((id, i) => {
+        const b = ((frame >> 4) + i) & 1;
+        ctx.drawImage(R.sprite(id), VW / 2 - 52 + i * 36, 88 - b, 32, 32);
+      });
+      text('Pick a starter below', VW / 2, 118, '#fff6d8', 8, 'center');
+    }
+  }
+
+  function renderBattle() {
+    const b = R.battle, s = R.state, sp = G.species(), e = R.SPECIES[b.id];
+    const bg = { overworld: ['#9ed880', '#5aa850'], grass: ['#9ed880', '#5aa850'], cave: ['#6e5e54', '#3e322c'], den: ['#5a3a4a', '#2a1a22'] }[b.where] || ['#9ed880', '#5aa850'];
+    const gr = ctx.createLinearGradient(0, 0, 0, VH);
+    gr.addColorStop(0, bg[0]); gr.addColorStop(1, bg[1]);
+    ctx.fillStyle = gr; ctx.fillRect(0, 0, VW, VH);
+    ctx.fillStyle = 'rgba(0,0,0,.18)';
+    ctx.beginPath(); ctx.ellipse(196, 88, 44, 10, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(60, 160, 52, 12, 0, 0, Math.PI * 2); ctx.fill();
+
+    const slide = b.intro * 6;
+    const eSize = b.boss ? 64 : 48;
+    if (!(b.flashE % 4 >= 2) && b.showE > 0) drawSprite(R.sprite(b.id), 196 - eSize / 2 + slide, 88 - eSize + 6, eSize, eSize, false);
+    else if (b.showE <= 0) { /* fainted */ }
+
+    if (!(b.flashP % 4 >= 2)) {
+      if (s.bound && G.cardImg) {
+        ctx.fillStyle = '#f2b632'; ctx.fillRect(40 - slide - 2, 98, 44, 60);
+        ctx.drawImage(G.cardImg, 40 - slide, 100, 40, 56);
+      } else {
+        drawSprite(R.sprite(s.starter), 36 - slide, 104, 52, 52, true);
+      }
+    }
+
+    // Enemy box
+    panel(8, 10, 118, 30);
+    text(`${e.name}`, 14, 14, '#fff6d8');
+    text(`Lv${b.lvl}`, 120, 14, '#e6ecff', 8, 'right');
+    hpBar(14, 28, 106, b.showE / b.emax);
+    // Player box
+    panel(128, 128, 120, 40);
+    text(s.bound ? s.bound.species.slice(0, 14) : sp.name, 134, 132, '#fff6d8');
+    text(`Lv${s.lvl}`, 242, 132, '#e6ecff', 8, 'right');
+    hpBar(134, 146, 108, b.showP / C.maxHp(s.lvl));
+    text(`${Math.max(0, b.showP)}/${C.maxHp(s.lvl)}`, 242, 153, '#e6ecff', 8, 'right');
+    if (s.bound) text(s.bound.grade, 134, 153, '#f2b632');
+  }
+
+  function hpBar(x, y, w, pct) {
+    pct = Math.max(0, Math.min(1, pct));
+    ctx.fillStyle = '#0e0f1c'; ctx.fillRect(x, y, w, 6);
+    ctx.fillStyle = pct > 0.5 ? '#5fe08a' : pct > 0.2 ? '#f2c94c' : '#ff5a5a';
+    ctx.fillRect(x + 1, y + 1, Math.round((w - 2) * pct), 4);
+  }
+
+  function renderReveal() {
+    const rv = R.reveal, c = rv.card, t = R.TIERS.find(x => x.id === c.tier) || R.TIERS[0];
+    ctx.fillStyle = 'rgba(10,10,22,.78)'; ctx.fillRect(0, 0, VW, VH);
+    const k = rv.t;
+    const W = 76, H = 106, cx = VW / 2, cy = 92;
+    let sx = 1, front = false;
+    if (k < 24) sx = k / 24;
+    else if (k < 48) { const p = (k - 24) / 24; sx = Math.abs(Math.cos(p * Math.PI)); front = p > 0.5; }
+    else front = true;
+    const w = Math.max(1, W * sx);
+    ctx.save();
+    ctx.translate(cx, cy);
+    if (front) {
+      ctx.fillStyle = t.color; ctx.fillRect(-w / 2, -H / 2, w, H);
+      ctx.fillStyle = '#14162a'; ctx.fillRect(-w / 2 + 4, -H / 2 + 4, w - 8, H - 8);
+      const g = ctx.createLinearGradient(-w / 2, -H / 2, w / 2, H / 2);
+      g.addColorStop(0, t.color); g.addColorStop(0.5, '#fff6d8'); g.addColorStop(1, t.color);
+      ctx.fillStyle = g; ctx.globalAlpha = 0.35 + 0.15 * Math.sin(k / 8);
+      ctx.fillRect(-w / 2 + 8, -H / 2 + 18, w - 16, 44);
+      ctx.globalAlpha = 1;
+      if (sx > 0.9) {
+        ctx.restore();
+        text(t.name, cx, cy - H / 2 + 7, t.color, 8, 'center');
+        text(c.grade, cx, cy + 18, '#fff6d8', 8, 'center');
+        text(c.uid, cx, cy + 30, '#9aa3c7', 8, 'center');
+        ctx.save(); ctx.translate(cx, cy);
+      }
+    } else {
+      ctx.fillStyle = '#2c2f55'; ctx.fillRect(-w / 2, -H / 2, w, H);
+      ctx.fillStyle = '#f2b632'; ctx.fillRect(-w / 2 + 3, -H / 2 + 3, w - 6, H - 6);
+      ctx.fillStyle = '#2c2f55'; ctx.fillRect(-w / 2 + 6, -H / 2 + 6, w - 12, H - 12);
+    }
+    ctx.restore();
+    if (front && (c.tier === 'rare' || c.tier === 'grail')) {
+      for (let i = 0; i < 14; i++) {
+        const a = i * 0.9 + k / 20, r = 52 + ((k * 2 + i * 13) % 30);
+        ctx.fillStyle = i % 2 ? t.color : '#fff6d8';
+        ctx.fillRect(Math.round(cx + Math.cos(a) * r), Math.round(cy + Math.sin(a) * r * 0.8), 2, 2);
+      }
+    }
+    if (k > 60) text('Sent to your wallet', cx, VH - 18, '#e6ecff', 8, 'center');
+  }
+
+  function draw() {
+    if (!onPlay()) return;
+    ctx.imageSmoothingEnabled = false;
+    if (!R.state) { ctx.fillStyle = '#0e0f1c'; ctx.fillRect(0, 0, VW, VH); return; }
+    if (R.battle) renderBattle();
+    else renderWorld();
+    if (R.reveal) renderReveal();
+    if (fade > 0) { ctx.fillStyle = `rgba(0,0,0,${Math.min(1, fade / 12)})`; ctx.fillRect(0, 0, VW, VH); }
+  }
+
+  // ---------- Layout ----------
+  function fit() {
+    const vw = window.innerWidth, vh = window.innerHeight;
+    const wide = vw >= 760;
+    const headH = (document.querySelector('.site-head') || { offsetHeight: 80 }).offsetHeight;
+    const byH = (vh - headH - (wide ? 205 : 250)) / 1.5;
+    const byW = wide ? vw - 320 : vw - 70;
+    const w = Math.round(Math.max(256, Math.min(512, byH, byW)));
+    document.documentElement.style.setProperty('--w', w + 'px');
+    document.documentElement.style.setProperty('--k', String(w / 256));
+  }
+  window.addEventListener('resize', fit);
+  fit();
+
+  // Called by the site router when the game page opens. `starter` comes from #/play?starter=…
+  let pendingStarter = null;
+  G.onShow = function (starter) {
+    fit();
+    held.length = 0;
+    if (starter && R.SPECIES[starter] && R.SPECIES[starter].starter) pendingStarter = starter;
+    if (ready) usePendingStarter();
+  };
+  function usePendingStarter() {
+    const id = pendingStarter;
+    pendingStarter = null;
+    if (id && !R.state.starter && R.ui.mode === 'starter') G.chooseStarter(id);
+  }
+
+  // ---------- Boot ----------
+  let acc = 0, last = performance.now();
+  function loop(now) {
+    acc += Math.min(100, now - last);
+    last = now;
+    while (acc >= 1000 / 60) { update(); acc -= 1000 / 60; }
+    draw();
+    requestAnimationFrame(loop);
+  }
+
+  async function boot() {
+    try {
+      await R.net.init();
+    } catch (err) {
+      console.error(err);
+      R.state = C.newState();
+      R.ui.init();
+      R.ui.dialog('Game server unreachable', [err.message || 'The game server did not respond.', 'Reload the page to try again.']);
+      return;
+    }
+    syncP();
+    faceDir = R.state.dir;
+    R.ui.init();
+    if (!R.state.starter) { R.ui.mode = 'starter'; R.ui.render(); }
+    else if (R.state.battle) {
+      const sb = R.state.battle;
+      R.battle = { id: sb.id, lvl: sb.lvl, boss: sb.boss, where: sb.where, emax: sb.emax, showE: sb.ehp, showP: R.state.hp,
+        queue: [{ text: 'The battle continues.' }], phase: 'msg', msg: '', over: null, flashE: 0, flashP: 0, intro: 0 };
+      R.ui.mode = 'battle';
+      G.battleNext();
+    }
+    G.onBoundChange();
+    checkArea();
+    ready = true;
+    usePendingStarter();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { banner.t = Math.max(banner.t, 120); });
+    setTimeout(() => R.wallet.tryAutoConnect(), 300);
+  }
+  requestAnimationFrame(loop);
+  boot();
+})();
+
+</script>
+  <script>
+// Route 151 — site router (#/ for the landing page, #/play for the game) and landing renders.
+(function () {
+  const R = window.R151, T = R.T;
+  const landing = document.getElementById('view-landing');
+  const play = document.getElementById('view-play');
+  const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ---------- Router ----------
+  function parse() {
+    const h = location.hash || '#/';
+    const [path, query] = h.slice(1).split('?');
+    const params = new URLSearchParams(query || '');
+    return { path: path || '/', params };
+  }
+  function route() {
+    const { path, params } = parse();
+    const isPlay = path === '/play';
+    document.body.classList.toggle('route-play', isPlay);
+    document.body.classList.toggle('route-landing', !isPlay);
+    landing.hidden = isPlay;
+    play.hidden = !isPlay;
+    document.title = isPlay ? 'Play Route 151' : 'Route 151 — Small world. Wild possibilities.';
+    if (isPlay) setActive('play');
+    else if (navLinks.some(a => a.dataset.nav === 'play' && a.classList.contains('on'))) setActive(null);
+    requestAnimationFrame(syncHead);
+    if (isPlay) {
+      window.scrollTo(0, 0);
+      if (R.game && R.game.onShow) R.game.onShow(params.get('starter'));
+    } else if (path === '/' && !location.hash.includes('?')) {
+      // stay where the user scrolled
+    }
+  }
+  window.addEventListener('hashchange', route);
+
+  // In-page scroll links keep the hash router intact.
+  document.addEventListener('click', e => {
+    const a = e.target.closest('[data-scroll]');
+    if (!a) return;
+    const el = document.getElementById(a.dataset.scroll);
+    if (!el) return;
+    e.preventDefault();
+    const go = () => el.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+    if (location.hash.startsWith('#/play')) { location.hash = '#/'; setTimeout(go, 60); }
+    else go();
+  });
+
+  // ---------- Sticky header: compact on scroll, keep anchors clear of it, highlight the current section ----------
+  const head = document.querySelector('.site-head');
+  const navLinks = [...document.querySelectorAll('.quick-nav [data-nav]')];
+  function syncHead() {
+    head.classList.toggle('compact', window.scrollY > 40);
+    document.documentElement.style.scrollPaddingTop = (head.offsetHeight + 12) + 'px';
+  }
+  window.addEventListener('scroll', syncHead, { passive: true });
+  window.addEventListener('resize', syncHead);
+  function setActive(id) { navLinks.forEach(a => a.classList.toggle('on', a.dataset.nav === id)); }
+  if ('IntersectionObserver' in window) {
+    const seen = new Map();
+    const secIO = new IntersectionObserver(es => {
+      es.forEach(e => seen.set(e.target.id, e.isIntersecting ? e.intersectionRatio : 0));
+      if (document.body.classList.contains('route-play')) return;
+      let best = null, bestR = 0;
+      seen.forEach((r, id) => { if (r > bestR) { bestR = r; best = id; } });
+      setActive(bestR > 0 ? best : null);
+    }, { threshold: [0, 0.2, 0.4, 0.6] });
+    ['adventure', 'world', 'how'].forEach(id => { const el = document.getElementById(id); if (el) secIO.observe(el); });
+  }
+
+  // ---------- Tile textures for CSS backgrounds ----------
+  const root = document.documentElement.style;
+  const tileVar = (name, t, frame) => {
+    try { root.setProperty(name, `url(${R.tileImg(t, frame || 0).toDataURL()})`); } catch (e) {}
+  };
+  tileVar('--tile-water', T.WATER); tileVar('--tile-grass', T.GRASS); tileVar('--tile-tall', T.TALL);
+  tileVar('--tile-path', T.PATH); tileVar('--tile-flower', T.FLOWER); tileVar('--tile-sand', T.SAND);
+
+  // ---------- Logos ----------
+  document.querySelectorAll('.logo-canvas, .hero-logo').forEach(c => R.drawLogo(c));
+
+  // ---------- Starter sprites ----------
+  document.querySelectorAll('canvas[data-sprite]').forEach(c => {
+    c.width = c.height = 16;
+    const g = c.getContext('2d');
+    g.imageSmoothingEnabled = false;
+    g.drawImage(R.sprite(c.dataset.sprite), 0, 0);
+  });
+
+  // ---------- Place scenes ----------
+  const SCENES = {
+    routes: { map: 'overworld', x: 11, y: 10, w: 8, h: 6, sprites: [{ id: 'embrit', x: 14, y: 13 }, { id: 'gnatling', x: 17, y: 12 }] },
+    caves: { map: 'cave', x: 10, y: 2, w: 8, h: 6, sprites: [{ id: 'gloomote', x: 15, y: 6 }, { id: 'puddlit', x: 13, y: 7 }] },
+    dens: { map: 'den', x: 6, y: 1, w: 8, h: 6, sprites: [{ id: 'thornox', x: 10, y: 3, size: 28 }, { id: 'burrbo', x: 10, y: 6 }] },
+  };
+  const sceneEls = [...document.querySelectorAll('canvas[data-scene]')];
+  function drawScenes(f) {
+    sceneEls.forEach(c => { const s = SCENES[c.dataset.scene]; R.drawScene(c, s.map, s.x, s.y, s.w, s.h, s.sprites, f); });
+  }
+  drawScenes(0);
+
+  // ---------- Attract mode: a slow tour of the overworld ----------
+  const att = document.getElementById('attract');
+  const ag = att.getContext('2d');
+  const ow = R.maps.overworld;
+  const PATH = [[10, 30], [10, 21], [20, 21], [32, 21], [40, 21], [40, 9], [40, 21], [49, 21], [49, 29], [49, 21], [10, 21], [10, 9], [6, 9], [10, 9], [10, 30]];
+  const pts = [];
+  for (let i = 0; i < PATH.length - 1; i++) {
+    const [ax, ay] = PATH[i], [bx, by] = PATH[i + 1];
+    const n = Math.abs(bx - ax) + Math.abs(by - ay);
+    for (let k = 0; k < n; k++) pts.push([ax + Math.sign(bx - ax) * k, ay + Math.sign(by - ay) * k, bx < ax]);
+  }
+  const STEP_FRAMES = 14;
+  let t = 0, attractOn = true;
+  function drawAttract() {
+    const idx = Math.floor(t / STEP_FRAMES) % pts.length;
+    const nxt = pts[(idx + 1) % pts.length];
+    const p = (t % STEP_FRAMES) / STEP_FRAMES;
+    const [x0, y0, left] = pts[idx];
+    const px = (x0 + (nxt[0] - x0) * p) * 16, py = (y0 + (nxt[1] - y0) * p) * 16;
+    const cx = Math.max(0, Math.min(px + 8 - 128, ow.w * 16 - 256));
+    const cy = Math.max(0, Math.min(py + 8 - 96, ow.h * 16 - 192));
+    const f = (t >> 5) & 1;
+    ag.imageSmoothingEnabled = false;
+    const tx0 = Math.floor(cx / 16), ty0 = Math.floor(cy / 16);
+    for (let ty = ty0; ty <= ty0 + 12; ty++) for (let tx = tx0; tx <= tx0 + 16; tx++) {
+      ag.drawImage(R.tileImg(R.getTile(ow, tx, ty), f), Math.round(tx * 16 - cx), Math.round(ty * 16 - cy));
+    }
+    const sx = Math.round(px - cx), sy = Math.round(py - cy), bob = (t >> 3) & 1;
+    ag.fillStyle = 'rgba(0,0,0,.25)'; ag.fillRect(sx + 3, sy + 13, 10, 2);
+    const spr = R.sprite('embrit');
+    if (left) { ag.save(); ag.translate(sx + 16, 0); ag.scale(-1, 1); ag.drawImage(spr, 0, sy - 2 - bob); ag.restore(); }
+    else ag.drawImage(spr, sx, sy - 2 - bob);
+    // Area banner
+    const area = R.areaName(ow, x0, y0);
+    ag.font = '8px "Silkscreen", monospace';
+    ag.textBaseline = 'top';
+    const w = Math.ceil(ag.measureText(area).width) + 14;
+    ag.fillStyle = '#0e0f1c'; ag.fillRect(5, 5, w + 2, 17);
+    ag.fillStyle = 'rgba(20,22,40,.85)'; ag.fillRect(6, 6, w, 15);
+    ag.fillStyle = '#fff6d8'; ag.fillText(area, 13, 9);
+  }
+
+  const io = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(e => { attractOn = e.isIntersecting; }), { threshold: 0.05 }) : null;
+  if (io) io.observe(att);
+
+  let sceneFrame = 0;
+  function loop() {
+    if (!landing.hidden) {
+      if (attractOn) { if (!reduceMotion) t++; drawAttract(); }
+      const sf = (t >> 5) & 1;
+      if (sf !== sceneFrame && !reduceMotion) { sceneFrame = sf; drawScenes(sf); }
+    }
+    requestAnimationFrame(loop);
+  }
+
+  route();
+  drawAttract();
+  requestAnimationFrame(loop);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => drawAttract());
+})();
+
+</script>
+</body>
+</html>
